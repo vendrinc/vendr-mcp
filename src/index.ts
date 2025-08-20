@@ -15,7 +15,7 @@ async function main() {
     },
   };
   
-  console.log("Starting MCP server...");
+  console.error("Starting MCP server...");
   
   // Create the MCP server
   const server = makeServer(context);
@@ -23,16 +23,16 @@ async function main() {
   // Create and connect to stdio transport
   const transport = new StdioServerTransport();
 
-  console.log("Connecting to transport...");
+  console.error("Connecting to transport...");
   
   // Start the server
   await server.connect(transport);
   
-  console.log("MCP server connected and running on stdio");
-  console.log("Waiting for client connections...");
+  console.error("MCP server connected and running on stdio");
+  console.error("Waiting for client connections...");
 
-  console.log("EXAMPLE CALL:")
-  console.log('{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"listCompanies","arguments":{}}}')
+  console.error("EXAMPLE CALL:")
+  console.error('{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"listCompanies","arguments":{}}}')
 }
 
 main().catch(console.error);
