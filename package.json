@@ -4,11 +4,13 @@
   "description": "Model Context Protocol tools for Vendr software pricing insights",
   "author": "Vendr Inc",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "start:built": "node dist/index.js"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.11.0",
