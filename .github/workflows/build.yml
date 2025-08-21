@@ -1,7 +1,6 @@
 name: Build and Compile
 
 on:
-  push:
   pull_request:
 
 jobs:
