@@ -1,7 +1,7 @@
 import { IncomingHttpHeaders } from "node:http";
 import { Result } from "result-type-ts";
 import * as Zod from "zod";
-import { serializers } from "../utils/json";
+import { serializers, sanitizeObjectStrings } from "../utils/json";
 
 export const description = `
 Vendr MCP Tools provide software pricing insights by adding Vendr’s proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr’s hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. When the user starts with a broad question about categories or companies, answer their question and nudge them to provide information required to generate a custom price estimate. Capture user needs through dimension questions to create scoped price estimates.
@@ -50,10 +50,13 @@ export type OutputSchema<S extends Zod.ZodRawShape> = SchemaType<
 export function structureContent<S>(result: Result<S, string>) {
   const isError = result.isFailure;
 
+  // Sanitize the data to remove problematic Unicode characters
+  const sanitizedData = result.value ? sanitizeObjectStrings(result.value) : result.value;
+
   const structuredContent = {
     isError,
     errorMessage: result.error,
-    data: result.value,
+    data: sanitizedData,
   };
 
   return {
