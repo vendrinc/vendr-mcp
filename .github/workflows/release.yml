@@ -47,11 +47,11 @@ jobs:
     - name: Get package info
       id: package-info
       run: |
-        PACKAGE_NAME=$(node -p "require('./package.json').name.replace('@', '').replace('/', '-')")
-        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        PACKAGE_NAME=$(node -p "require('./manifest.json').name")
+        PACKAGE_VERSION=$(node -p "require('./manifest.json').version")
         echo "name=${PACKAGE_NAME}" >> $GITHUB_OUTPUT
         echo "version=${PACKAGE_VERSION}" >> $GITHUB_OUTPUT
-        echo "filename=${PACKAGE_NAME}-${PACKAGE_VERSION}.dxt" >> $GITHUB_OUTPUT
+        echo "filename=vendr-mcp.dxt" >> $GITHUB_OUTPUT
 
     - name: Upload DXT artifact
       uses: actions/upload-artifact@v4
@@ -60,6 +60,22 @@ jobs:
         path: "*.dxt"
         retention-days: 90
 
+    - name: Create release (if triggered by push to main)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.package-info.outputs.version }}-${{ github.run_number }}
+        release_name: Release v${{ steps.package-info.outputs.version }}-${{ github.run_number }}
+        body: |
+          Auto-generated release from main branch merge
+          
+          Commit: ${{ github.sha }}
+        draft: false
+        prerelease: false
+
     - name: Upload to release (if triggered by release)
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1
@@ -67,6 +83,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.package-info.outputs.filename }}
+        asset_name: ${{ steps.package-info.outputs.filename }}
+        asset_content_type: application/octet-stream
+
+    - name: Upload to auto-created release (if triggered by push to main)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.package-info.outputs.filename }}
         asset_name: ${{ steps.package-info.outputs.filename }}
         asset_content_type: application/octet-stream
