@@ -9,6 +9,7 @@
     "moduleDetection": "force",
     "noEmit": false,
     "outDir": "dist",
+    "rootDir": "src",
     "composite": false,
     "strict": true,
     "downlevelIteration": true,
