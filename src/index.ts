@@ -3,17 +3,28 @@ import { Context } from "./context";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 async function main() {
-  // Create a context object with required configuration
+  // Create a context object with configuration from environment variables
   const context: Context = {
-    apiKey: "your-api-key",
-    baseUrl: "https://api.vendr.com",
+    apiKey: process.env.VENDR_API_KEY || "",
+    baseUrl: process.env.VENDR_BASE_URL || "https://api.vendr.com",
     userIdentifyingHeaders: {
-      "x-vendr-end-user-identifier": "your-user-identifier",
-      "x-vendr-end-user-ip": "your-ip-address",
-      "x-vendr-end-user-email": "your-email",
-      "x-vendr-end-user-organization-name": "your-organization-name",
+      "x-vendr-end-user-identifier": process.env.VENDR_USER_IDENTIFIER || "",
+      "x-vendr-end-user-ip": process.env.VENDR_USER_IP || "",
+      "x-vendr-end-user-email": process.env.VENDR_USER_EMAIL || "",
+      "x-vendr-end-user-organization-name": process.env.VENDR_ORGANIZATION_NAME || "",
     },
   };
+
+  // Validate required configuration
+  if (!context.apiKey) {
+    console.error("Error: VENDR_API_KEY environment variable is required");
+    process.exit(1);
+  }
+
+  if (!context.userIdentifyingHeaders["x-vendr-end-user-identifier"]) {
+    console.error("Error: VENDR_USER_IDENTIFIER environment variable is required");
+    process.exit(1);
+  }
   
   console.error("Starting MCP server...");
   

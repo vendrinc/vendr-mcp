@@ -1,0 +1,86 @@
+{
+  "dxt_version": "0.1",
+  "name": "vendr-mcp-tools",
+  "display_name": "Vendr Software Pricing Tools",
+  "version": "1.0.0",
+  "description": "Model Context Protocol tools for Vendr software pricing insights. Get price estimates, company information, and product catalog data.",
+  "author": {
+    "name": "Vendr Inc",
+    "email": "support@vendr.com",
+    "url": "https://vendr.com"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "vendr",
+    "software-pricing",
+    "pricing-tools",
+    "saas",
+    "procurement"
+  ],
+  "user_config": {
+    "VENDR_API_KEY": {
+      "type": "string",
+      "title": "API Key",
+      "description": "Your API key for authentication",
+      "sensitive": true,
+      "required": true
+    },
+    "VENDR_BASE_URL": {
+      "type": "string",
+      "title": "Vendr API endpoint",
+      "description": "..",
+      "default": "https://api.vendr.com",
+      "required": true
+    },
+    "VENDR_USER_IDENTIFIER": {
+      "type": "string",
+      "title": "User identifier",
+      "description": "..",
+      "required": true
+    },
+    "VENDR_USER_EMAIL": {
+      "type": "string",      
+      "title": "User email",
+      "description": "..",
+      "required": true
+    },
+    "VENDR_ORGANIZATION_NAME": {
+      "type": "string",      
+      "title": "User organization name",
+      "description": "..",
+      "required": true
+    },
+    "debug_mode": {
+      "type": "string",
+      "title": "Debug Mode",
+      "description": "Set debug level (example of non-sensitive string)",
+      "default": "info",
+      "required": false
+    }
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
+      "env": {
+        "VENDR_API_KEY": "${user_config.VENDR_API_KEY}",
+        "VENDR_BASE_URL": "${user_config.VENDR_BASE_URL}",
+        "VENDR_USER_IDENTIFIER": "${user_config.VENDR_USER_IDENTIFIER}",
+        "VENDR_USER_EMAIL": "${user_config.VENDR_USER_EMAIL}",
+        "VENDR_ORGANIZATION_NAME": "${user_config.VENDR_ORGANIZATION_NAME}"
+      }
+    }
+  },
+  "license": "MIT",
+  "homepage": "https://vendr.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vendrinc/vendr-mcp"
+  },
+  "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBzdHJva2U9IiMwMDcwZjMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0iIzAwNzBmMyIvPgo8L3N2Zz4K"
+}
