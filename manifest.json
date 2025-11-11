@@ -33,12 +33,6 @@
       "default": "https://api.vendr.com",
       "required": true
     },
-    "VENDR_USER_IDENTIFIER": {
-      "type": "string",
-      "title": "User identifier",
-      "description": "..",
-      "required": true
-    },
     "VENDR_USER_EMAIL": {
       "type": "string",      
       "title": "User email",
