@@ -4,8 +4,8 @@ import * as Tools from "./tools";
 
 export function makeServer(context: Context) {
   const server = new McpServer({
-    name: "vendr-mcp",
-    version: "1.1.0",
+    name: "@vendrinc/mcp",
+    version: "1.0.0",
   });
 
   Tools.register(server, context);

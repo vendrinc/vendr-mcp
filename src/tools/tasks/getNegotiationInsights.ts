@@ -20,6 +20,13 @@ export function register(server: McpServer, context: Context) {
       description,
       inputSchema,
       outputSchema: Common.structuredSchema(outputSchema),
+      annotations: {
+        title: "Get Negotiation Insights",
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
     },
     Common.withInstrumentation(
       name,

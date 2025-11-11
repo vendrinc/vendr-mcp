@@ -95,6 +95,13 @@ export function register(server: McpServer, context: Context) {
       description,
       inputSchema,
       outputSchema: Common.structuredSchema(outputSchema),
+      annotations: {
+        title: "Get Custom Price Estimate",
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
     },
     Common.withInstrumentation(name, async (args) => {
       try {
