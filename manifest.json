@@ -97,5 +97,5 @@
     "type": "git",
     "url": "https://github.com/vendrinc/vendr-mcp"
   },
-  "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBzdHJva2U9IiMwMDcwZjMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0iIzAwNzBmMyIvPgo8L3N2Zz4K"
+  "icon": "icon.png"
 }
