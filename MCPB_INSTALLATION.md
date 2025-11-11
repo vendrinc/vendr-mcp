@@ -104,7 +104,7 @@ For technical issues with the extension:
 
 ## Version Information
 
-- **Extension Version**: 1.0.0
+- **Extension Version**: 1.1.0
 - **Package Size**: 18.4MB
 - **Total Files**: 3,622
 - **Node.js Runtime**: Included (no separate installation required)

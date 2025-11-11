@@ -1,6 +1,6 @@
 {
   "name": "@vendrinc/mcp-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Model Context Protocol tools for Vendr software pricing insights",
   "author": "Vendr Inc",
   "main": "src/index.ts",
