@@ -1,8 +1,8 @@
 {
-  "dxt_version": "0.1",
+  "manifest_version": "0.3",
   "name": "vendr-mcp-tools",
   "display_name": "Vendr Software Pricing Tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Model Context Protocol tools for Vendr software pricing insights. Get price estimates, company information, and product catalog data.",
   "author": {
     "name": "Vendr Inc",
@@ -76,6 +76,21 @@
       }
     }
   },
+  "tools": [
+    {
+      "name": "searchCompaniesAndProducts",
+      "description": "Search for companies and their products"
+    },
+    {
+      "name": "getCustomPriceEstimate",
+      "description": "Get custom price estimates based on purchase scope"
+    },
+    {
+      "name": "getNegotiationInsights",
+      "description": "Get negotiation insights and strategies for a company"
+    }
+  ],
+  "tools_generated": false,
   "license": "MIT",
   "homepage": "https://vendr.com",
   "repository": {

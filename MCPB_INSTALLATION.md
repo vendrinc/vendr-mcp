@@ -1,6 +1,6 @@
 # Vendr MCP Tools - Claude Desktop Extension Installation
 
-This guide walks you through installing the Vendr MCP Tools as a Desktop Extension (DXT) in Claude Desktop.
+This guide walks you through installing the Vendr MCP Tools as a Desktop Extension (MCPB) in Claude Desktop.
 
 ## Prerequisites
 
@@ -12,14 +12,14 @@ This guide walks you through installing the Vendr MCP Tools as a Desktop Extensi
 
 ### 1. Download the Extension
 
-The extension is packaged as `vendr-mcp.dxt` (18.4MB).
+The extension is packaged as `vendr-mcp.mcpb`.
 
 ### 2. Install in Claude Desktop
 
 1. **Open Claude Desktop**
 2. **Go to Settings**: Click your initials or name in the lower left corner, then select "Settings"
 3. **Navigate to Extensions**: Click "Extensions" under **Desktop app** and then "Advanced Settings"
-4. **Install Extension**: Click "Install extension" and choose the `.dxt` file
+4. **Install Extension**: Click "Install extension" and choose the `.mcpb` file
 
 ### 3. Configure the Extension
 
@@ -74,7 +74,7 @@ Once installed, you can ask Claude questions like:
 ### Extension Won't Install
 - Ensure you're running the latest version of Claude Desktop
 - Check that you have sufficient disk space (extension is 18.4MB)
-- Try redownloading the `.dxt` file
+- Try redownloading the `.mcpb` file
 
 ### Extension Appears Installed but Tools Aren't Available
 - Restart Claude Desktop to refresh the extension registry
