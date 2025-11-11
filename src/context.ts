@@ -1,4 +1,4 @@
-import { UserIdentifyingHeaders } from "./tools/common";
+import type { UserIdentifyingHeaders } from "./tools/common";
 
 export type Context = {
   apiKey: string;

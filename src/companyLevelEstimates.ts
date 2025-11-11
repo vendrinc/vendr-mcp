@@ -1,6 +1,6 @@
 import { Result } from "result-type-ts";
+import type { Context } from "./context";
 import * as PublicApi from "./public-api";
-import { Context } from "./context";
 
 export async function getCompanyPriceRange(args: {
   scopeId: string;

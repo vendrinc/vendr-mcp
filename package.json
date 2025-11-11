@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Model Context Protocol tools for Vendr software pricing insights",
   "author": "Vendr Inc",
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "dev": "tsx src/index.ts",
+    "start": "tsx src/index.ts",
     "package:dxt": "dxt pack"
   },
   "dependencies": {

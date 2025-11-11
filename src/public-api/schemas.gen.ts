@@ -58,8 +58,8 @@ export const V1CatalogCompaniesCompanyidGetSchema = {
       .optional(),
     productFamilies: z.array(
       z.object({
-        id: z.string().uuid().describe("The ID of the product"),
-        name: z.string().describe("The name of the product"),
+        id: z.string().uuid().describe("The ID of the product family"),
+        name: z.string().describe("The name of the product family"),
         defaultPriceRange: z
           .object({
             min: z.number(),
@@ -107,6 +107,11 @@ export const V1CatalogCompaniesCompanyidGetSchema = {
           .string()
           .describe("Currency of the default price")
           .optional(),
+        isCustomEstimateAvailable: z
+          .boolean()
+          .describe(
+            "Indicates whether a custom price estimate can be generated for this product or not",
+          ),
         lastUpdatedAt: z
           .string()
           .datetime({ offset: true })
@@ -135,6 +140,13 @@ export const V1CatalogCompaniesCompanyidGetSchema = {
         numberOfOtherDimensions: z.number(),
       }),
     ),
+    realPurchaseCount: z
+      .number()
+      .int()
+      .describe(
+        "Number of actual purchases for this company that Vendr has researched in the past 2 years",
+      )
+      .optional(),
     lastUpdatedAt: z
       .string()
       .datetime({ offset: true })
@@ -388,6 +400,19 @@ export const V1ScopePostSchema = {
 
 // v1.scope.from-document.post.ts
 export const V1ScopeFromDocumentPostSchema = {
+  inputSchema: {
+    fileUrl: z
+      .string()
+      .url()
+      .describe("Presigned S3 URL for the document to process")
+      .optional(),
+    purchaseType: z
+      .enum(["new_purchase", "renewal"])
+      .nullable()
+      .describe("Type of agreement")
+      .optional(),
+  },
+
   outputSchema: {
     scopeId: z.string().uuid().describe("ID of the created scope"),
   },
@@ -537,6 +562,39 @@ export const V1PricingAdvancedScopeidGetSchema = {
       .string()
       .datetime({ offset: true })
       .describe("Timestamp when this estimate was generated"),
+    realPurchaseCount: z
+      .array(
+        z
+          .object({
+            companyId: z.string().uuid(),
+            companyName: z.string(),
+            realPurchaseCount: z.number().int(),
+          })
+          .describe(
+            "Count of real purchases of this company’s products that informed this price estimate.",
+          ),
+      )
+      .describe(
+        "Number of actual purchases for these companies that Vendr has researched in the past 2 years",
+      ),
+    realSimilarPurchases: z
+      .array(
+        z.object({
+          id: z.string().uuid(),
+          startDate: z.string().datetime({ offset: true }),
+          termMonths: z.number(),
+          negotiatedPrice: z.number(),
+          productNames: z.array(z.string()),
+          primaryDimensionName: z.string(),
+          primaryDimensionValue: z.number(),
+          numberOfOtherDimensions: z.number(),
+          similarityRate: z
+            .number()
+            .int()
+            .describe("% similarity with real purchases"),
+        }),
+      )
+      .describe("Actual purchases that are similar to the user’s requirement"),
   },
 } as const;
 
@@ -701,6 +759,11 @@ export const V1CatalogProductsProductidGetSchema = {
       }),
     ),
     currency: z.string().describe("Currency of the default price").optional(),
+    isCustomEstimateAvailable: z
+      .boolean()
+      .describe(
+        "Indicates whether a custom price estimate can be generated for this product or not",
+      ),
     lastUpdatedAt: z
       .string()
       .datetime({ offset: true })
@@ -888,6 +951,11 @@ export const V1CatalogProductFamiliesProductfamilyidGetSchema = {
             .string()
             .describe("Currency of the default price")
             .optional(),
+          isCustomEstimateAvailable: z
+            .boolean()
+            .describe(
+              "Indicates whether a custom price estimate can be generated for this product or not",
+            ),
           lastUpdatedAt: z
             .string()
             .datetime({ offset: true })
@@ -1156,6 +1224,13 @@ export const V1CatalogCompaniesGetSchema = {
               .describe("Date and time when this record was last updated"),
           })
           .optional(),
+        realPurchaseCount: z
+          .number()
+          .int()
+          .describe(
+            "Number of actual purchases for this company that Vendr has researched in the past 2 years",
+          )
+          .optional(),
         lastUpdatedAt: z
           .string()
           .datetime({ offset: true })
@@ -1254,6 +1329,11 @@ export const V1CatalogCompaniesCompanyidProductFamiliesGetSchema = {
                 .string()
                 .describe("Currency of the default price")
                 .optional(),
+              isCustomEstimateAvailable: z
+                .boolean()
+                .describe(
+                  "Indicates whether a custom price estimate can be generated for this product or not",
+                ),
               lastUpdatedAt: z
                 .string()
                 .datetime({ offset: true })
@@ -1424,6 +1504,11 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
           .string()
           .describe("Currency of the default price")
           .optional(),
+        isCustomEstimateAvailable: z
+          .boolean()
+          .describe(
+            "Indicates whether a custom price estimate can be generated for this product or not",
+          ),
         lastUpdatedAt: z
           .string()
           .datetime({ offset: true })
@@ -1565,5 +1650,27 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
       limit: z.number().int(),
       offset: z.number().int(),
     }),
+  },
+} as const;
+
+// v1.negotiation.faqs.{companyId}.get.ts
+export const V1NegotiationFaqsCompanyidGetSchema = {
+  inputSchema: {
+    companyId: z.string().uuid(),
+  },
+
+  outputSchema: {
+    faqs: z
+      .array(
+        z.object({
+          question: z.string().describe("The question to be answered"),
+          answer: z.string().describe("The answer to the question"),
+        }),
+      )
+      .describe("FAQs about how to negotiate with this company"),
+    lastUpdatedAt: z
+      .string()
+      .datetime({ offset: true })
+      .describe("Date and time when this record was last updated"),
   },
 } as const;

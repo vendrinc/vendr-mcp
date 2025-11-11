@@ -103,6 +103,10 @@ export type CompanySearchResponse = {
       lastUpdatedAt: string;
     };
     /**
+     * Number of actual purchases for this company that Vendr has researched in the past 2 years
+     */
+    realPurchaseCount?: number;
+    /**
      * Date and time when this record was last updated
      */
     lastUpdatedAt: string;
@@ -237,6 +241,10 @@ export type CompanyProductsListResponse = {
      * Currency of the default price
      */
     currency?: string;
+    /**
+     * Indicates whether a custom price estimate can be generated for this product or not
+     */
+    isCustomEstimateAvailable: boolean;
     /**
      * Date and time when this record was last updated
      */
@@ -406,6 +414,10 @@ export type CompanyProductFamiliesListResponse = {
        */
       currency?: string;
       /**
+       * Indicates whether a custom price estimate can be generated for this product or not
+       */
+      isCustomEstimateAvailable: boolean;
+      /**
        * Date and time when this record was last updated
        */
       lastUpdatedAt: string;
@@ -421,18 +433,38 @@ export type CompanyProductFamiliesListResponse = {
 export type IntentSearchResponse = {
   data: Array<{
     id: string;
+    /**
+     * When the intent became available in our API (high granularity, unique). Use this as a reliable cursor for pagination and polling. This may be delayed from when the user interaction occurred, which is represented with e.g. `event.requestedOn` or `event.viewedAt`.
+     */
+    timestamp: string;
     userDetails: {
-      companyName: string;
-      domain: string;
+      companyName?: string;
+      domain?: string;
+      ipAddress?: string;
       countryCode?: string;
       city?: string;
       region?: string;
       sector?: string;
       headcount?: number;
+      /**
+       * @deprecated
+       */
       estimatedRevenue?: number;
+      /**
+       * @deprecated
+       */
       estimatedRevenueRawValue?: string;
+      /**
+       * User company's estimated revenue grouped into one of: <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
+       */
+      estimatedRevenueRange?:
+        | "below-10M"
+        | "10-50M"
+        | "50-100M"
+        | "100-500M"
+        | "500-1B"
+        | "1B-above";
     };
-    timestamp: string;
     event:
       | {
           engagementType: "price-estimate";
@@ -469,6 +501,10 @@ export type IntentSearchResponse = {
              * Currency of the default price
              */
             currency?: string;
+            /**
+             * Indicates whether a custom price estimate can be generated for this product or not
+             */
+            isCustomEstimateAvailable: boolean;
             /**
              * Date and time when this record was last updated
              */
@@ -724,10 +760,7 @@ export type IntentSearchResponse = {
            * Currency code (ISO 4217)
            */
           currency?: string;
-          /**
-           * Timestamp when this estimate was generated
-           */
-          timestamp?: string;
+          origin?: string;
         }
       | {
           engagementType: "price-check";
@@ -764,6 +797,10 @@ export type IntentSearchResponse = {
              * Currency of the default price
              */
             currency?: string;
+            /**
+             * Indicates whether a custom price estimate can be generated for this product or not
+             */
+            isCustomEstimateAvailable: boolean;
             /**
              * Date and time when this record was last updated
              */
@@ -850,6 +887,7 @@ export type IntentSearchResponse = {
             max: number;
           };
           requestedOn: string;
+          origin?: string;
         }
       | {
           engagementType: "catalog-view-verified";
@@ -887,6 +925,10 @@ export type IntentSearchResponse = {
              */
             currency?: string;
             /**
+             * Indicates whether a custom price estimate can be generated for this product or not
+             */
+            isCustomEstimateAvailable: boolean;
+            /**
              * Date and time when this record was last updated
              */
             lastUpdatedAt: string;
@@ -952,6 +994,7 @@ export type IntentSearchResponse = {
           };
           viewedAt: string;
           totalDailyVisits?: number;
+          origin?: string;
         }
       | {
           engagementType: "catalog-view";
@@ -989,6 +1032,10 @@ export type IntentSearchResponse = {
              */
             currency?: string;
             /**
+             * Indicates whether a custom price estimate can be generated for this product or not
+             */
+            isCustomEstimateAvailable: boolean;
+            /**
              * Date and time when this record was last updated
              */
             lastUpdatedAt: string;
@@ -1054,8 +1101,8 @@ export type IntentSearchResponse = {
           };
           viewedAt: string;
           totalDailyVisits?: number;
+          origin?: string;
         };
-    origin?: string;
   }>;
   pagination: {
     total: number;
@@ -1121,6 +1168,10 @@ export type CompanyProductFamilyDetail = {
      * Currency of the default price
      */
     currency?: string;
+    /**
+     * Indicates whether a custom price estimate can be generated for this product or not
+     */
+    isCustomEstimateAvailable: boolean;
     /**
      * Date and time when this record was last updated
      */
@@ -1223,6 +1274,10 @@ export type CompanySummary = {
     lastUpdatedAt: string;
   };
   /**
+   * Number of actual purchases for this company that Vendr has researched in the past 2 years
+   */
+  realPurchaseCount?: number;
+  /**
    * Date and time when this record was last updated
    */
   lastUpdatedAt: string;
@@ -1293,11 +1348,11 @@ export type CompanyDetail = {
   };
   productFamilies: Array<{
     /**
-     * The ID of the product
+     * The ID of the product family
      */
     id: string;
     /**
-     * The name of the product
+     * The name of the product family
      */
     name: string;
     /**
@@ -1350,6 +1405,10 @@ export type CompanyDetail = {
      */
     currency?: string;
     /**
+     * Indicates whether a custom price estimate can be generated for this product or not
+     */
+    isCustomEstimateAvailable: boolean;
+    /**
      * Date and time when this record was last updated
      */
     lastUpdatedAt: string;
@@ -1375,6 +1434,10 @@ export type CompanyDetail = {
     primaryDimensionValue: number;
     numberOfOtherDimensions: number;
   }>;
+  /**
+   * Number of actual purchases for this company that Vendr has researched in the past 2 years
+   */
+  realPurchaseCount?: number;
   /**
    * Date and time when this record was last updated
    */
@@ -1423,6 +1486,10 @@ export type ProductSummary = {
    * Currency of the default price
    */
   currency?: string;
+  /**
+   * Indicates whether a custom price estimate can be generated for this product or not
+   */
+  isCustomEstimateAvailable: boolean;
   /**
    * Date and time when this record was last updated
    */
@@ -1542,6 +1609,10 @@ export type ProductDetail = {
    * Currency of the default price
    */
   currency?: string;
+  /**
+   * Indicates whether a custom price estimate can be generated for this product or not
+   */
+  isCustomEstimateAvailable: boolean;
   /**
    * Date and time when this record was last updated
    */
@@ -2142,6 +2213,31 @@ export type AdvancedPriceResponse = {
    * Timestamp when this estimate was generated
    */
   timestamp: string;
+  /**
+   * Number of actual purchases for these companies that Vendr has researched in the past 2 years
+   */
+  realPurchaseCount: Array<{
+    companyId: string;
+    companyName: string;
+    realPurchaseCount: number;
+  }>;
+  /**
+   * Actual purchases that are similar to the user’s requirement
+   */
+  realSimilarPurchases: Array<{
+    id: string;
+    startDate: string;
+    termMonths: number;
+    negotiatedPrice: number;
+    productNames: Array<string>;
+    primaryDimensionName: string;
+    primaryDimensionValue: number;
+    numberOfOtherDimensions: number;
+    /**
+     * % similarity with real purchases
+     */
+    similarityRate: number;
+  }>;
 };
 
 export type ScopeCreate = {
@@ -2515,18 +2611,38 @@ export type _Error = {
 
 export type IntentSummary = {
   id: string;
+  /**
+   * When the intent became available in our API (high granularity, unique). Use this as a reliable cursor for pagination and polling. This may be delayed from when the user interaction occurred, which is represented with e.g. `event.requestedOn` or `event.viewedAt`.
+   */
+  timestamp: string;
   userDetails: {
-    companyName: string;
-    domain: string;
+    companyName?: string;
+    domain?: string;
+    ipAddress?: string;
     countryCode?: string;
     city?: string;
     region?: string;
     sector?: string;
     headcount?: number;
+    /**
+     * @deprecated
+     */
     estimatedRevenue?: number;
+    /**
+     * @deprecated
+     */
     estimatedRevenueRawValue?: string;
+    /**
+     * User company's estimated revenue grouped into one of: <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
+     */
+    estimatedRevenueRange?:
+      | "below-10M"
+      | "10-50M"
+      | "50-100M"
+      | "100-500M"
+      | "500-1B"
+      | "1B-above";
   };
-  timestamp: string;
   event:
     | {
         engagementType: "price-estimate";
@@ -2563,6 +2679,10 @@ export type IntentSummary = {
            * Currency of the default price
            */
           currency?: string;
+          /**
+           * Indicates whether a custom price estimate can be generated for this product or not
+           */
+          isCustomEstimateAvailable: boolean;
           /**
            * Date and time when this record was last updated
            */
@@ -2818,10 +2938,7 @@ export type IntentSummary = {
          * Currency code (ISO 4217)
          */
         currency?: string;
-        /**
-         * Timestamp when this estimate was generated
-         */
-        timestamp?: string;
+        origin?: string;
       }
     | {
         engagementType: "price-check";
@@ -2858,6 +2975,10 @@ export type IntentSummary = {
            * Currency of the default price
            */
           currency?: string;
+          /**
+           * Indicates whether a custom price estimate can be generated for this product or not
+           */
+          isCustomEstimateAvailable: boolean;
           /**
            * Date and time when this record was last updated
            */
@@ -2944,6 +3065,7 @@ export type IntentSummary = {
           max: number;
         };
         requestedOn: string;
+        origin?: string;
       }
     | {
         engagementType: "catalog-view-verified";
@@ -2981,6 +3103,10 @@ export type IntentSummary = {
            */
           currency?: string;
           /**
+           * Indicates whether a custom price estimate can be generated for this product or not
+           */
+          isCustomEstimateAvailable: boolean;
+          /**
            * Date and time when this record was last updated
            */
           lastUpdatedAt: string;
@@ -3046,6 +3172,7 @@ export type IntentSummary = {
         };
         viewedAt: string;
         totalDailyVisits?: number;
+        origin?: string;
       }
     | {
         engagementType: "catalog-view";
@@ -3083,6 +3210,10 @@ export type IntentSummary = {
            */
           currency?: string;
           /**
+           * Indicates whether a custom price estimate can be generated for this product or not
+           */
+          isCustomEstimateAvailable: boolean;
+          /**
            * Date and time when this record was last updated
            */
           lastUpdatedAt: string;
@@ -3148,8 +3279,8 @@ export type IntentSummary = {
         };
         viewedAt: string;
         totalDailyVisits?: number;
+        origin?: string;
       };
-  origin?: string;
 };
 
 export type TrackRequest = {
@@ -3208,6 +3339,40 @@ export type LearningDataSample = {
   primaryDimensionName: string;
   primaryDimensionValue: number;
   numberOfOtherDimensions: number;
+};
+
+export type FaqsResponse = {
+  /**
+   * FAQs about how to negotiate with this company
+   */
+  faqs: Array<{
+    /**
+     * The question to be answered
+     */
+    question: string;
+    /**
+     * The answer to the question
+     */
+    answer: string;
+  }>;
+  /**
+   * Date and time when this record was last updated
+   */
+  lastUpdatedAt: string;
+};
+
+export type ModelResponse = {
+  /**
+   * Id of the model response
+   */
+  id: string;
+};
+
+export type ModelResponseCreate = {
+  /**
+   * The model to use for the response
+   */
+  model?: string;
 };
 
 /**
@@ -3409,11 +3574,11 @@ export type GetCompanyResponses = {
     };
     productFamilies: Array<{
       /**
-       * The ID of the product
+       * The ID of the product family
        */
       id: string;
       /**
-       * The name of the product
+       * The name of the product family
        */
       name: string;
       /**
@@ -3466,6 +3631,10 @@ export type GetCompanyResponses = {
        */
       currency?: string;
       /**
+       * Indicates whether a custom price estimate can be generated for this product or not
+       */
+      isCustomEstimateAvailable: boolean;
+      /**
        * Date and time when this record was last updated
        */
       lastUpdatedAt: string;
@@ -3491,6 +3660,10 @@ export type GetCompanyResponses = {
       primaryDimensionValue: number;
       numberOfOtherDimensions: number;
     }>;
+    /**
+     * Number of actual purchases for this company that Vendr has researched in the past 2 years
+     */
+    realPurchaseCount?: number;
     /**
      * Date and time when this record was last updated
      */
@@ -3690,6 +3863,10 @@ export type GetProductFamilyResponses = {
        * Currency of the default price
        */
       currency?: string;
+      /**
+       * Indicates whether a custom price estimate can be generated for this product or not
+       */
+      isCustomEstimateAvailable: boolean;
       /**
        * Date and time when this record was last updated
        */
@@ -3937,6 +4114,10 @@ export type GetProductResponses = {
      * Currency of the default price
      */
     currency?: string;
+    /**
+     * Indicates whether a custom price estimate can be generated for this product or not
+     */
+    isCustomEstimateAvailable: boolean;
     /**
      * Date and time when this record was last updated
      */
@@ -4647,6 +4828,10 @@ export type ListCompaniesResponses = {
         lastUpdatedAt: string;
       };
       /**
+       * Number of actual purchases for this company that Vendr has researched in the past 2 years
+       */
+      realPurchaseCount?: number;
+      /**
        * Date and time when this record was last updated
        */
       lastUpdatedAt: string;
@@ -4874,6 +5059,10 @@ export type ListProductFamiliesResponses = {
          * Currency of the default price
          */
         currency?: string;
+        /**
+         * Indicates whether a custom price estimate can be generated for this product or not
+         */
+        isCustomEstimateAvailable: boolean;
         /**
          * Date and time when this record was last updated
          */
@@ -5154,6 +5343,10 @@ export type GetCompanyProductsResponses = {
        * Currency of the default price
        */
       currency?: string;
+      /**
+       * Indicates whether a custom price estimate can be generated for this product or not
+       */
+      isCustomEstimateAvailable: boolean;
       /**
        * Date and time when this record was last updated
        */
@@ -5852,6 +6045,31 @@ export type GetAdvancedPriceEstimateResponses = {
      * Timestamp when this estimate was generated
      */
     timestamp: string;
+    /**
+     * Number of actual purchases for these companies that Vendr has researched in the past 2 years
+     */
+    realPurchaseCount: Array<{
+      companyId: string;
+      companyName: string;
+      realPurchaseCount: number;
+    }>;
+    /**
+     * Actual purchases that are similar to the user’s requirement
+     */
+    realSimilarPurchases: Array<{
+      id: string;
+      startDate: string;
+      termMonths: number;
+      negotiatedPrice: number;
+      productNames: Array<string>;
+      primaryDimensionName: string;
+      primaryDimensionValue: number;
+      numberOfOtherDimensions: number;
+      /**
+       * % similarity with real purchases
+       */
+      similarityRate: number;
+    }>;
   };
 };
 
@@ -6490,13 +6708,13 @@ export type CreateScopeResponse =
 
 export type CreateScopeFromDocumentData = {
   /**
-   * Document to upload
+   * Document to upload - either via presigned URL or direct upload
    */
   body: {
     /**
-     * Contract, quote, or other pricing documents. 50mb size limit. May be one of: pdf, docx, doc, xls, xlsx, csv, png, or jpeg.
+     * Presigned S3 URL for the document to process
      */
-    file: Blob | File;
+    fileUrl?: string;
     /**
      * Type of agreement
      */
@@ -7233,31 +7451,47 @@ export type GetV1HealthResponse =
   GetV1HealthResponses[keyof GetV1HealthResponses];
 
 export type ListIntentData = {
-  body?: never;
-  headers?: {
+  body: {
     /**
-     * Unique identifier for the end user
+     * Filter to only keep intent where API availability timestamp is after `fromTimestamp`. Use for reliable cursor-based pagination.
      */
-    "x-vendr-end-user-identifier"?: string;
+    fromTimestamp?: string;
     /**
-     * IP address of the end user
+     * Filter to only keep intent where API availability timestamp is before `toTimestamp`. Use for reliable cursor-based pagination.
      */
-    "x-vendr-end-user-ip"?: string;
+    toTimestamp?: string;
     /**
-     * Email address of the end user
+     * Filter responses to keep only intent where `userDetails` has a non-null `companyName` value
      */
-    "x-vendr-end-user-email"?: string;
+    userHasCompanyName?: boolean;
     /**
-     * Unique identifier for the end user's organization
+     * Filter responses to keep only intent where `userDetails` has a non-null `domain` value
      */
-    "x-vendr-end-user-organization-name"?: string;
-  };
-  path?: never;
-  query?: {
+    userHasCompanyDomain?: boolean;
     /**
-     * Filter by supplier ID
+     * Filter responses to keep only intent where `userDetails` has a non-null `ipAddress`
      */
-    supplierIds?: Array<string>;
+    userHasCompanyIpAddress?: boolean;
+    /**
+     * Filter responses to keep only intent where `userDetails` has non-null location values (one of `countryCode`, `city`, `region`)
+     */
+    userHasCompanyLocation?: boolean;
+    /**
+     * Filter responses to keep only intent where `userDetails` has a non-null `sector` value
+     */
+    userHasCompanySector?: boolean;
+    /**
+     * Filter responses to keep only intent where `userDetails` has a non-null `headcount` value
+     */
+    userHasCompanyHeadcount?: boolean;
+    /**
+     * Filter responses to keep only intent where `userDetails` has a non-null `estimatedRevenue` value
+     */
+    userHasCompanyRevenue?: boolean;
+    /**
+     * Filter by seller company ID
+     */
+    companyIds?: Array<string>;
     /**
      * Filter by product family ID
      */
@@ -7267,35 +7501,9 @@ export type ListIntentData = {
      */
     productIds?: Array<string>;
     /**
-     * Filter by company name, seller or product name (partial match)
+     * Filter by seller name, product name or buyer company name (partial match, case-insensitive)
      */
     name?: string;
-    /**
-     * Filter by company domain
-     */
-    domain?: string;
-    /**
-     * Filter by location. (country code)
-     */
-    location?: string;
-    /**
-     * Filter by headcount by the following headcount group - <50, 50-250, 251-1000, 1000+
-     */
-    headcount?: "below-50" | "50-250" | "251-1000" | "1000-above";
-    /**
-     * Filter by revenue by the following revenue group - <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
-     */
-    revenue?:
-      | "below-10M"
-      | "10-50M"
-      | "50-100M"
-      | "100-500M"
-      | "500-1B"
-      | "1B-above";
-    /**
-     * Filter by from date
-     */
-    fromDate?: string;
     /**
      * Filter by engagement type
      */
@@ -7310,15 +7518,19 @@ export type ListIntentData = {
      */
     origin?: string;
     /**
-     * Filter by to date
+     * Filter to only keep intent events where user interaction occurred on or after `fromDate`
+     */
+    fromDate?: string;
+    /**
+     * Filter to only keep intent events where user interaction occurred before `toDate`
      */
     toDate?: string;
     /**
-     * Maximum number of companies to return
+     * Maximum number of intents to return
      */
     limit?: number;
     /**
-     * Number of companies to skip
+     * Number of intents to skip
      */
     offset?: number;
     /**
@@ -7328,12 +7540,46 @@ export type ListIntentData = {
       | "product-name"
       | "buyer-company-name"
       | "seller-company-name"
-      | "captured-at";
+      | "captured-at"
+      | "timestamp";
     /**
      * Sort order
      */
     sortOrder?: "asc" | "desc";
+    /**
+     * Filter by supplier ID. Deprecated, use `companyIds` instead
+     * @deprecated
+     */
+    supplierIds?: Array<string>;
+    /**
+     * Filter by company domain
+     * @deprecated
+     */
+    domain?: string;
+    /**
+     * Filter by location. (country code)
+     * @deprecated
+     */
+    location?: string;
+    /**
+     * Filter by headcount by the following headcount group - <50, 50-250, 251-1000, 1000+
+     * @deprecated
+     */
+    headcount?: "below-50" | "50-250" | "251-1000" | "1000-above";
+    /**
+     * Filter by revenue by the following revenue group - <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
+     * @deprecated
+     */
+    revenue?:
+      | "below-10M"
+      | "10-50M"
+      | "50-100M"
+      | "100-500M"
+      | "500-1B"
+      | "1B-above";
   };
+  path?: never;
+  query?: never;
   url: "/v1/intent";
 };
 
@@ -7433,18 +7679,38 @@ export type ListIntentResponses = {
   200: {
     data: Array<{
       id: string;
+      /**
+       * When the intent became available in our API (high granularity, unique). Use this as a reliable cursor for pagination and polling. This may be delayed from when the user interaction occurred, which is represented with e.g. `event.requestedOn` or `event.viewedAt`.
+       */
+      timestamp: string;
       userDetails: {
-        companyName: string;
-        domain: string;
+        companyName?: string;
+        domain?: string;
+        ipAddress?: string;
         countryCode?: string;
         city?: string;
         region?: string;
         sector?: string;
         headcount?: number;
+        /**
+         * @deprecated
+         */
         estimatedRevenue?: number;
+        /**
+         * @deprecated
+         */
         estimatedRevenueRawValue?: string;
+        /**
+         * User company's estimated revenue grouped into one of: <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
+         */
+        estimatedRevenueRange?:
+          | "below-10M"
+          | "10-50M"
+          | "50-100M"
+          | "100-500M"
+          | "500-1B"
+          | "1B-above";
       };
-      timestamp: string;
       event:
         | {
             engagementType: "price-estimate";
@@ -7481,6 +7747,10 @@ export type ListIntentResponses = {
                * Currency of the default price
                */
               currency?: string;
+              /**
+               * Indicates whether a custom price estimate can be generated for this product or not
+               */
+              isCustomEstimateAvailable: boolean;
               /**
                * Date and time when this record was last updated
                */
@@ -7736,10 +8006,7 @@ export type ListIntentResponses = {
              * Currency code (ISO 4217)
              */
             currency?: string;
-            /**
-             * Timestamp when this estimate was generated
-             */
-            timestamp?: string;
+            origin?: string;
           }
         | {
             engagementType: "price-check";
@@ -7776,6 +8043,10 @@ export type ListIntentResponses = {
                * Currency of the default price
                */
               currency?: string;
+              /**
+               * Indicates whether a custom price estimate can be generated for this product or not
+               */
+              isCustomEstimateAvailable: boolean;
               /**
                * Date and time when this record was last updated
                */
@@ -7862,6 +8133,7 @@ export type ListIntentResponses = {
               max: number;
             };
             requestedOn: string;
+            origin?: string;
           }
         | {
             engagementType: "catalog-view-verified";
@@ -7899,6 +8171,10 @@ export type ListIntentResponses = {
                */
               currency?: string;
               /**
+               * Indicates whether a custom price estimate can be generated for this product or not
+               */
+              isCustomEstimateAvailable: boolean;
+              /**
                * Date and time when this record was last updated
                */
               lastUpdatedAt: string;
@@ -7964,6 +8240,7 @@ export type ListIntentResponses = {
             };
             viewedAt: string;
             totalDailyVisits?: number;
+            origin?: string;
           }
         | {
             engagementType: "catalog-view";
@@ -8001,6 +8278,10 @@ export type ListIntentResponses = {
                */
               currency?: string;
               /**
+               * Indicates whether a custom price estimate can be generated for this product or not
+               */
+              isCustomEstimateAvailable: boolean;
+              /**
                * Date and time when this record was last updated
                */
               lastUpdatedAt: string;
@@ -8066,8 +8347,8 @@ export type ListIntentResponses = {
             };
             viewedAt: string;
             totalDailyVisits?: number;
+            origin?: string;
           };
-      origin?: string;
     }>;
     pagination: {
       total: number;
@@ -8078,854 +8359,6 @@ export type ListIntentResponses = {
 };
 
 export type ListIntentResponse = ListIntentResponses[keyof ListIntentResponses];
-
-export type ListIntent2Data = {
-  body: {
-    /**
-     * Filter by supplier ID
-     */
-    supplierIds?: Array<string>;
-    /**
-     * Filter by product family ID
-     */
-    productFamilyIds?: Array<string>;
-    /**
-     * Filter by product ID
-     */
-    productIds?: Array<string>;
-    /**
-     * Filter by company name, seller or product name (partial match)
-     */
-    name?: string;
-    /**
-     * Filter by company domain
-     */
-    domain?: string;
-    /**
-     * Filter by location. (country code)
-     */
-    location?: string;
-    /**
-     * Filter by headcount by the following headcount group - <50, 50-250, 251-1000, 1000+
-     */
-    headcount?: "below-50" | "50-250" | "251-1000" | "1000-above";
-    /**
-     * Filter by revenue by the following revenue group - <$10M, $10-50M, $50-100M, $100-500M, $500-$1B, $1B+
-     */
-    revenue?:
-      | "below-10M"
-      | "10-50M"
-      | "50-100M"
-      | "100-500M"
-      | "500-1B"
-      | "1B-above";
-    /**
-     * Filter by from date
-     */
-    fromDate?: string;
-    /**
-     * Filter by engagement type
-     */
-    engagementType?: Array<
-      | "price-estimate"
-      | "price-check"
-      | "catalog-view-verified"
-      | "catalog-view"
-    >;
-    /**
-     * Filter by origin
-     */
-    origin?: string;
-    /**
-     * Filter by to date
-     */
-    toDate?: string;
-    /**
-     * Maximum number of companies to return
-     */
-    limit?: number;
-    /**
-     * Number of companies to skip
-     */
-    offset?: number;
-    /**
-     * Field to sort by
-     */
-    sortBy?:
-      | "product-name"
-      | "buyer-company-name"
-      | "seller-company-name"
-      | "captured-at";
-    /**
-     * Sort order
-     */
-    sortOrder?: "asc" | "desc";
-  };
-  headers?: {
-    /**
-     * Unique identifier for the end user
-     */
-    "x-vendr-end-user-identifier"?: string;
-    /**
-     * IP address of the end user
-     */
-    "x-vendr-end-user-ip"?: string;
-    /**
-     * Email address of the end user
-     */
-    "x-vendr-end-user-email"?: string;
-    /**
-     * Unique identifier for the end user's organization
-     */
-    "x-vendr-end-user-organization-name"?: string;
-  };
-  path?: never;
-  query?: never;
-  url: "/v1/intent";
-};
-
-export type ListIntent2Errors = {
-  /**
-   * Invalid request
-   */
-  400: {
-    /**
-     * HTTP status type
-     */
-    type?: string;
-    /**
-     * HTTP status code
-     */
-    status: number;
-    /**
-     * HTTP status title
-     */
-    title: string;
-    /**
-     * Human-readable description of the error
-     */
-    detail: string;
-    instance?: string;
-    trace?: {
-      timestamp?: string;
-      requestId?: string;
-      buildId?: string;
-      rayId?: string;
-    };
-  };
-  /**
-   * Unauthorized
-   */
-  401: {
-    /**
-     * HTTP status type
-     */
-    type?: string;
-    /**
-     * HTTP status code
-     */
-    status: number;
-    /**
-     * HTTP status title
-     */
-    title: string;
-    /**
-     * Human-readable description of the error
-     */
-    detail: string;
-    instance?: string;
-    trace?: {
-      timestamp?: string;
-      requestId?: string;
-      buildId?: string;
-      rayId?: string;
-    };
-  };
-  /**
-   * Forbidden
-   */
-  403: {
-    /**
-     * HTTP status type
-     */
-    type?: string;
-    /**
-     * HTTP status code
-     */
-    status: number;
-    /**
-     * HTTP status title
-     */
-    title: string;
-    /**
-     * Human-readable description of the error
-     */
-    detail: string;
-    instance?: string;
-    trace?: {
-      timestamp?: string;
-      requestId?: string;
-      buildId?: string;
-      rayId?: string;
-    };
-  };
-};
-
-export type ListIntent2Error = ListIntent2Errors[keyof ListIntent2Errors];
-
-export type ListIntent2Responses = {
-  /**
-   * Successful operation
-   */
-  200: {
-    data: Array<{
-      id: string;
-      userDetails: {
-        companyName: string;
-        domain: string;
-        countryCode?: string;
-        city?: string;
-        region?: string;
-        sector?: string;
-        headcount?: number;
-        estimatedRevenue?: number;
-        estimatedRevenueRawValue?: string;
-      };
-      timestamp: string;
-      event:
-        | {
-            engagementType: "price-estimate";
-            product?: {
-              /**
-               * The ID of the product
-               */
-              id: string;
-              /**
-               * ID of the product family this product is a part of
-               */
-              productFamilyId?: string;
-              /**
-               * The name of the product
-               */
-              name: string;
-              /**
-               * The description of the product
-               */
-              description?: string;
-              /**
-               * The icon of the product
-               */
-              icon?: string;
-              /**
-               * URL of the product
-               */
-              url?: string;
-              /**
-               * The typical price of the product
-               */
-              defaultPrice?: number;
-              /**
-               * Currency of the default price
-               */
-              currency?: string;
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            company: {
-              id: string;
-              name: string;
-              legalName: string;
-              domain: string;
-              url?: string;
-              description: string;
-              /**
-               * If false, indicates that the company is active as a brand, even if acquired or merged with another company
-               */
-              discontinued: boolean;
-              /**
-               * The logo of the company.
-               */
-              icon?: string;
-              /**
-               * The fiscal year end for the company
-               */
-              fiscalYearEnd?: string;
-              /**
-               * Array of public stock market symbols for the company
-               */
-              stockSymbols?: Array<{
-                /**
-                 * The stock market symbol for the company
-                 */
-                symbol: string;
-                /**
-                 * The stock market exchange for this stock symbol
-                 */
-                exchange: string;
-              }>;
-              category?: {
-                /**
-                 * Unique identifier for the category
-                 */
-                id: string;
-                /**
-                 * Name of the category
-                 */
-                name: string;
-                /**
-                 * Description of the category
-                 */
-                description: string;
-                /**
-                 * ID of the parent category
-                 */
-                parentCategoryId?: string;
-                /**
-                 * Date and time when this record was last updated
-                 */
-                lastUpdatedAt: string;
-              };
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            requestedOn: string;
-            /**
-             * Price estimate distribution at 5 percentile increments
-             */
-            estimate: {
-              /**
-               * 10th percentile price estimate
-               */
-              percentile10?: number;
-              /**
-               * 15th percentile price estimate
-               */
-              percentile15?: number;
-              /**
-               * 20th percentile price estimate
-               */
-              percentile20?: number;
-              /**
-               * 25th percentile price estimate
-               */
-              percentile25?: number;
-              /**
-               * 30th percentile price estimate
-               */
-              percentile30?: number;
-              /**
-               * 35th percentile price estimate
-               */
-              percentile35?: number;
-              /**
-               * 40th percentile price estimate
-               */
-              percentile40?: number;
-              /**
-               * 45th percentile price estimate
-               */
-              percentile45?: number;
-              /**
-               * 50th percentile price estimate (median)
-               */
-              percentile50?: number;
-              /**
-               * 55th percentile price estimate
-               */
-              percentile55?: number;
-              /**
-               * 60th percentile price estimate
-               */
-              percentile60?: number;
-              /**
-               * 65th percentile price estimate
-               */
-              percentile65?: number;
-              /**
-               * 70th percentile price estimate
-               */
-              percentile70?: number;
-              /**
-               * 75th percentile price estimate
-               */
-              percentile75?: number;
-              /**
-               * 80th percentile price estimate
-               */
-              percentile80?: number;
-              /**
-               * 85th percentile price estimate
-               */
-              percentile85?: number;
-              /**
-               * 90th percentile price estimate
-               */
-              percentile90?: number;
-            };
-            /**
-             * Product level price estimate distributions
-             */
-            productEstimates?: Array<
-              | {
-                  status: "success";
-                  /**
-                   * Whether the product estimate was defaulted to a fallback
-                   */
-                  defaulted: boolean;
-                  /**
-                   * Price estimate distribution at 5 percentile increments
-                   */
-                  estimate: {
-                    /**
-                     * 10th percentile price estimate
-                     */
-                    percentile10: number;
-                    /**
-                     * 15th percentile price estimate
-                     */
-                    percentile15: number;
-                    /**
-                     * 20th percentile price estimate
-                     */
-                    percentile20: number;
-                    /**
-                     * 25th percentile price estimate
-                     */
-                    percentile25: number;
-                    /**
-                     * 30th percentile price estimate
-                     */
-                    percentile30: number;
-                    /**
-                     * 35th percentile price estimate
-                     */
-                    percentile35: number;
-                    /**
-                     * 40th percentile price estimate
-                     */
-                    percentile40: number;
-                    /**
-                     * 45th percentile price estimate
-                     */
-                    percentile45: number;
-                    /**
-                     * 50th percentile price estimate (median)
-                     */
-                    percentile50: number;
-                    /**
-                     * 55th percentile price estimate
-                     */
-                    percentile55: number;
-                    /**
-                     * 60th percentile price estimate
-                     */
-                    percentile60: number;
-                    /**
-                     * 65th percentile price estimate
-                     */
-                    percentile65: number;
-                    /**
-                     * 70th percentile price estimate
-                     */
-                    percentile70: number;
-                    /**
-                     * 75th percentile price estimate
-                     */
-                    percentile75: number;
-                    /**
-                     * 80th percentile price estimate
-                     */
-                    percentile80: number;
-                    /**
-                     * 85th percentile price estimate
-                     */
-                    percentile85: number;
-                    /**
-                     * 90th percentile price estimate
-                     */
-                    percentile90: number;
-                  };
-                  /**
-                   * Name of the product
-                   */
-                  name: string;
-                  /**
-                   * ID of the product
-                   */
-                  productId: string;
-                }
-              | {
-                  status: "error";
-                  code: "pricing_failed" | "validation_failed";
-                  /**
-                   * Whether the product estimate was defaulted to a fallback, that then failed
-                   */
-                  defaulted: boolean;
-                  /**
-                   * Error message
-                   */
-                  message: string;
-                  /**
-                   * Name of the product
-                   */
-                  name: string;
-                  /**
-                   * ID of the product
-                   */
-                  productId: string;
-                }
-            >;
-            /**
-             * Currency code (ISO 4217)
-             */
-            currency?: string;
-            /**
-             * Timestamp when this estimate was generated
-             */
-            timestamp?: string;
-          }
-        | {
-            engagementType: "price-check";
-            product?: {
-              /**
-               * The ID of the product
-               */
-              id: string;
-              /**
-               * ID of the product family this product is a part of
-               */
-              productFamilyId?: string;
-              /**
-               * The name of the product
-               */
-              name: string;
-              /**
-               * The description of the product
-               */
-              description?: string;
-              /**
-               * The icon of the product
-               */
-              icon?: string;
-              /**
-               * URL of the product
-               */
-              url?: string;
-              /**
-               * The typical price of the product
-               */
-              defaultPrice?: number;
-              /**
-               * Currency of the default price
-               */
-              currency?: string;
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            company: {
-              id: string;
-              name: string;
-              legalName: string;
-              domain: string;
-              url?: string;
-              description: string;
-              /**
-               * If false, indicates that the company is active as a brand, even if acquired or merged with another company
-               */
-              discontinued: boolean;
-              /**
-               * The logo of the company.
-               */
-              icon?: string;
-              /**
-               * The fiscal year end for the company
-               */
-              fiscalYearEnd?: string;
-              /**
-               * Array of public stock market symbols for the company
-               */
-              stockSymbols?: Array<{
-                /**
-                 * The stock market symbol for the company
-                 */
-                symbol: string;
-                /**
-                 * The stock market exchange for this stock symbol
-                 */
-                exchange: string;
-              }>;
-              category?: {
-                /**
-                 * Unique identifier for the category
-                 */
-                id: string;
-                /**
-                 * Name of the category
-                 */
-                name: string;
-                /**
-                 * Description of the category
-                 */
-                description: string;
-                /**
-                 * ID of the parent category
-                 */
-                parentCategoryId?: string;
-                /**
-                 * Date and time when this record was last updated
-                 */
-                lastUpdatedAt: string;
-              };
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            /**
-             * Whether the price check is for a new purchase or a renewal.
-             */
-            purchaseType: "new_purchase" | "renewal";
-            /**
-             * The date of the renewal estimate.
-             */
-            estimateRenewalDate?: string;
-            /**
-             * The approximate range for the estimated contract value.
-             */
-            estimateContractValueRange?: {
-              /**
-               * The minimum estimated contract value.
-               */
-              min: number;
-              /**
-               * The maximum estimated contract value.
-               */
-              max: number;
-            };
-            requestedOn: string;
-          }
-        | {
-            engagementType: "catalog-view-verified";
-            product?: {
-              /**
-               * The ID of the product
-               */
-              id: string;
-              /**
-               * ID of the product family this product is a part of
-               */
-              productFamilyId?: string;
-              /**
-               * The name of the product
-               */
-              name: string;
-              /**
-               * The description of the product
-               */
-              description?: string;
-              /**
-               * The icon of the product
-               */
-              icon?: string;
-              /**
-               * URL of the product
-               */
-              url?: string;
-              /**
-               * The typical price of the product
-               */
-              defaultPrice?: number;
-              /**
-               * Currency of the default price
-               */
-              currency?: string;
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            company: {
-              id: string;
-              name: string;
-              legalName: string;
-              domain: string;
-              url?: string;
-              description: string;
-              /**
-               * If false, indicates that the company is active as a brand, even if acquired or merged with another company
-               */
-              discontinued: boolean;
-              /**
-               * The logo of the company.
-               */
-              icon?: string;
-              /**
-               * The fiscal year end for the company
-               */
-              fiscalYearEnd?: string;
-              /**
-               * Array of public stock market symbols for the company
-               */
-              stockSymbols?: Array<{
-                /**
-                 * The stock market symbol for the company
-                 */
-                symbol: string;
-                /**
-                 * The stock market exchange for this stock symbol
-                 */
-                exchange: string;
-              }>;
-              category?: {
-                /**
-                 * Unique identifier for the category
-                 */
-                id: string;
-                /**
-                 * Name of the category
-                 */
-                name: string;
-                /**
-                 * Description of the category
-                 */
-                description: string;
-                /**
-                 * ID of the parent category
-                 */
-                parentCategoryId?: string;
-                /**
-                 * Date and time when this record was last updated
-                 */
-                lastUpdatedAt: string;
-              };
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            viewedAt: string;
-            totalDailyVisits?: number;
-          }
-        | {
-            engagementType: "catalog-view";
-            product?: {
-              /**
-               * The ID of the product
-               */
-              id: string;
-              /**
-               * ID of the product family this product is a part of
-               */
-              productFamilyId?: string;
-              /**
-               * The name of the product
-               */
-              name: string;
-              /**
-               * The description of the product
-               */
-              description?: string;
-              /**
-               * The icon of the product
-               */
-              icon?: string;
-              /**
-               * URL of the product
-               */
-              url?: string;
-              /**
-               * The typical price of the product
-               */
-              defaultPrice?: number;
-              /**
-               * Currency of the default price
-               */
-              currency?: string;
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            company: {
-              id: string;
-              name: string;
-              legalName: string;
-              domain: string;
-              url?: string;
-              description: string;
-              /**
-               * If false, indicates that the company is active as a brand, even if acquired or merged with another company
-               */
-              discontinued: boolean;
-              /**
-               * The logo of the company.
-               */
-              icon?: string;
-              /**
-               * The fiscal year end for the company
-               */
-              fiscalYearEnd?: string;
-              /**
-               * Array of public stock market symbols for the company
-               */
-              stockSymbols?: Array<{
-                /**
-                 * The stock market symbol for the company
-                 */
-                symbol: string;
-                /**
-                 * The stock market exchange for this stock symbol
-                 */
-                exchange: string;
-              }>;
-              category?: {
-                /**
-                 * Unique identifier for the category
-                 */
-                id: string;
-                /**
-                 * Name of the category
-                 */
-                name: string;
-                /**
-                 * Description of the category
-                 */
-                description: string;
-                /**
-                 * ID of the parent category
-                 */
-                parentCategoryId?: string;
-                /**
-                 * Date and time when this record was last updated
-                 */
-                lastUpdatedAt: string;
-              };
-              /**
-               * Date and time when this record was last updated
-               */
-              lastUpdatedAt: string;
-            };
-            viewedAt: string;
-            totalDailyVisits?: number;
-          };
-      origin?: string;
-    }>;
-    pagination: {
-      total: number;
-      limit: number;
-      offset: number;
-    };
-  };
-};
-
-export type ListIntent2Response =
-  ListIntent2Responses[keyof ListIntent2Responses];
 
 export type TrackIntentData = {
   /**
@@ -9080,6 +8513,453 @@ export type TrackIntentResponses = {
 
 export type TrackIntentResponse =
   TrackIntentResponses[keyof TrackIntentResponses];
+
+export type GetFaqsData = {
+  body?: never;
+  headers?: {
+    /**
+     * Unique identifier for the end user
+     */
+    "x-vendr-end-user-identifier"?: string;
+    /**
+     * IP address of the end user
+     */
+    "x-vendr-end-user-ip"?: string;
+    /**
+     * Email address of the end user
+     */
+    "x-vendr-end-user-email"?: string;
+    /**
+     * Unique identifier for the end user's organization
+     */
+    "x-vendr-end-user-organization-name"?: string;
+  };
+  path: {
+    /**
+     * Id of the company to retrieve negotiation insights for
+     */
+    companyId: string;
+  };
+  query?: never;
+  url: "/v1/negotiation/faqs/{companyId}";
+};
+
+export type GetFaqsErrors = {
+  /**
+   * Invalid request
+   */
+  400: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Unauthorized
+   */
+  401: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Forbidden
+   */
+  403: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Company not found
+   */
+  404: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+};
+
+export type GetFaqsError = GetFaqsErrors[keyof GetFaqsErrors];
+
+export type GetFaqsResponses = {
+  /**
+   * Successful operation
+   */
+  200: {
+    /**
+     * FAQs about how to negotiate with this company
+     */
+    faqs: Array<{
+      /**
+       * The question to be answered
+       */
+      question: string;
+      /**
+       * The answer to the question
+       */
+      answer: string;
+    }>;
+    /**
+     * Date and time when this record was last updated
+     */
+    lastUpdatedAt: string;
+  };
+};
+
+export type GetFaqsResponse = GetFaqsResponses[keyof GetFaqsResponses];
+
+export type UploadFileData = {
+  /**
+   * File upload request - either via presigned URL or direct upload
+   */
+  body: {
+    /**
+     * Presigned S3 URL for the file to process
+     */
+    fileUrl: string;
+  };
+  headers?: {
+    /**
+     * Unique identifier for the end user
+     */
+    "x-vendr-end-user-identifier"?: string;
+    /**
+     * IP address of the end user
+     */
+    "x-vendr-end-user-ip"?: string;
+    /**
+     * Email address of the end user
+     */
+    "x-vendr-end-user-email"?: string;
+    /**
+     * Unique identifier for the end user's organization
+     */
+    "x-vendr-end-user-organization-name"?: string;
+  };
+  path?: never;
+  query?: never;
+  url: "/v1/files";
+};
+
+export type UploadFileErrors = {
+  /**
+   * Bad request - invalid file URL or parameters
+   */
+  400: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Unauthorized
+   */
+  401: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Forbidden
+   */
+  403: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Internal server error
+   */
+  500: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+};
+
+export type UploadFileError = UploadFileErrors[keyof UploadFileErrors];
+
+export type UploadFileResponses = {
+  /**
+   * File uploaded and registered successfully
+   */
+  201: {
+    /**
+     * Unique identifier for the document reference
+     */
+    Id: string;
+  };
+};
+
+export type UploadFileResponse = UploadFileResponses[keyof UploadFileResponses];
+
+export type ChatWithAgentData = {
+  /**
+   * Inputs to chat with an agent
+   */
+  body: {
+    /**
+     * The model to use for the response
+     */
+    model?: string;
+  };
+  headers?: {
+    /**
+     * Unique identifier for the end user
+     */
+    "x-vendr-end-user-identifier"?: string;
+    /**
+     * IP address of the end user
+     */
+    "x-vendr-end-user-ip"?: string;
+    /**
+     * Email address of the end user
+     */
+    "x-vendr-end-user-email"?: string;
+    /**
+     * Unique identifier for the end user's organization
+     */
+    "x-vendr-end-user-organization-name"?: string;
+  };
+  path?: never;
+  query?: never;
+  url: "/v1/responses";
+};
+
+export type ChatWithAgentErrors = {
+  /**
+   * Unauthorized
+   */
+  401: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+  /**
+   * Forbidden
+   */
+  403: {
+    /**
+     * HTTP status type
+     */
+    type?: string;
+    /**
+     * HTTP status code
+     */
+    status: number;
+    /**
+     * HTTP status title
+     */
+    title: string;
+    /**
+     * Human-readable description of the error
+     */
+    detail: string;
+    instance?: string;
+    trace?: {
+      timestamp?: string;
+      requestId?: string;
+      buildId?: string;
+      rayId?: string;
+    };
+  };
+};
+
+export type ChatWithAgentError = ChatWithAgentErrors[keyof ChatWithAgentErrors];
+
+export type ChatWithAgentResponses = {
+  /**
+   * Successful operation
+   */
+  200: {
+    /**
+     * Id of the model response
+     */
+    id: string;
+  };
+};
+
+export type ChatWithAgentResponse =
+  ChatWithAgentResponses[keyof ChatWithAgentResponses];
 
 export type ClientOptions = {
   baseUrl:

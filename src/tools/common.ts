@@ -1,17 +1,10 @@
-import { IncomingHttpHeaders } from "node:http";
-import { Result } from "result-type-ts";
+import type { IncomingHttpHeaders } from "node:http";
+import type { Result } from "result-type-ts";
 import * as Zod from "zod";
-import { serializers, sanitizeObjectStrings } from "../utils/json";
+import { serializers } from "../utils/json";
 
 export const description = `
-Vendr MCP Tools provide software pricing insights by adding Vendr’s proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr’s hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. When the user starts with a broad question about categories or companies, answer their question and nudge them to provide information required to generate a custom price estimate. Capture user needs through dimension questions to create scoped price estimates.
-
-Key points to note:
-
-- Navigate Vendr’s unique software database alongside public data. Fill any gaps in the database using publicly available information.
-- While you use MCP tools to gather data, keep the user engaged with non-technical commentary on what you are doing. Keep the commentary succinct.
-- Keep your tone professional and subtly convey that you are doing deep pricing research. The user shouldn’t feel restless about what’s going on while you are working.
-- Towards the end of a chat, let user know that they are welcome to connect with software pricing experts at Vendr if they want additional help with their software procurement.
+Vendr MCP Tools provide software pricing insights by adding Vendr’s proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr’s hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. 
 `;
 
 export type SchemaType<S extends Zod.ZodRawShape> = {
@@ -50,13 +43,10 @@ export type OutputSchema<S extends Zod.ZodRawShape> = SchemaType<
 export function structureContent<S>(result: Result<S, string>) {
   const isError = result.isFailure;
 
-  // Sanitize the data to remove problematic Unicode characters
-  const sanitizedData = result.value ? sanitizeObjectStrings(result.value) : result.value;
-
   const structuredContent = {
     isError,
     errorMessage: result.error,
-    data: sanitizedData,
+    data: result.value,
   };
 
   return {
@@ -81,6 +71,7 @@ export function captureException(
     extra: Record<string, unknown>;
   },
 ) {
+  // No-op for distribution build (removes Sentry dependency)
   console.error("Error:", error);
 }
 
@@ -93,3 +84,4 @@ export function withInstrumentation<T extends readonly unknown[], R>(
   // Simply return the handler without any instrumentation
   return handler;
 }
+

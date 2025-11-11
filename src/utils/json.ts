@@ -3,52 +3,6 @@
  * with large payloads in logging and tracing.
  */
 
-/**
- * Sanitize strings to remove problematic Unicode characters that can cause
- * ByteString conversion errors. This specifically handles characters like
- * Unicode Line Separator (8232) and Paragraph Separator (8233).
- */
-export function sanitizeUnicodeString(str: string): string {
-  // Replace problematic Unicode characters with safe alternatives
-  return str
-    .replace(/\u2028/g, '\n')  // Line Separator (8232) -> newline
-    .replace(/\u2029/g, '\n\n')  // Paragraph Separator (8233) -> double newline
-    .replace(/[\u0080-\u009F]/g, '')  // Remove other control characters
-    .replace(/[^\x00-\x7F]/g, (char) => {
-      // For other non-ASCII characters, try to preserve them but escape if needed
-      const code = char.charCodeAt(0);
-      if (code > 255) {
-        // Replace with a safe placeholder or remove
-        return '';
-      }
-      return char;
-    });
-}
-
-/**
- * Recursively sanitize an object to remove problematic Unicode characters
- * from all string values.
- */
-export function sanitizeObjectStrings<T>(obj: T): T {
-  if (typeof obj === 'string') {
-    return sanitizeUnicodeString(obj) as T;
-  }
-  
-  if (Array.isArray(obj)) {
-    return obj.map(sanitizeObjectStrings) as T;
-  }
-  
-  if (obj !== null && typeof obj === 'object') {
-    const sanitized = {} as Record<string, unknown>;
-    for (const [key, value] of Object.entries(obj)) {
-      sanitized[sanitizeUnicodeString(key)] = sanitizeObjectStrings(value);
-    }
-    return sanitized as T;
-  }
-  
-  return obj;
-}
-
 const DEFAULT_MAX_LENGTH = 10000; // 10KB limit by default
 const TRUNCATION_SUFFIX = "... [truncated]";
 

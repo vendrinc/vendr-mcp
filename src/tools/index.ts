@@ -1,33 +1,25 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Context } from "../context";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ZodRawShape } from "zod";
+import type { Context } from "../context";
 
-import * as CreateScope from "./createScope";
-import * as GetAdvancedPriceEstimate from "./getAdvancedPriceEstimate";
-import * as GetBasicPriceEstimate from "./getBasicPriceEstimate";
-import * as GetCompany from "./getCompany";
-import * as GetProduct from "./getProduct";
-import * as GetProductFamily from "./getProductFamily";
-import * as GetScope from "./getScope";
-import * as ListCategories from "./listCategories";
-import * as ListCompanies from "./listCompanies";
-import * as ListProductFamilies from "./listProductFamilies";
-import * as ListProducts from "./listProducts";
+import * as GetCustomPriceEstimate from "./tasks/getCustomPriceEstimate";
+import * as GetNegotiationInsights from "./tasks/getNegotiationInsights";
+import * as SearchCompaniesAndProducts from "./tasks/searchCompaniesAndProducts";
 
-const tools = [
-  CreateScope,  GetAdvancedPriceEstimate,
-  GetBasicPriceEstimate,
-  GetCompany,
-  GetProduct,
-  ListProductFamilies,
-  GetScope,
-  ListCategories,
-  ListCompanies,
-  GetProductFamily,
-  ListProducts,
+const tasks: {
+  name: string;
+  description: string;
+  inputSchema: ZodRawShape;
+  outputSchema: ZodRawShape;
+  register: (server: McpServer, context: Context) => void;
+}[] = [
+  GetCustomPriceEstimate,
+  SearchCompaniesAndProducts,
+  GetNegotiationInsights,
 ];
 
 export function register(server: McpServer, context: Context) {
-  for (const tool of tools) {
-    tool.register(server, context);
+  for (const task of tasks) {
+    task.register(server, context);
   }
 }
