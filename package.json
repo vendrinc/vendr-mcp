@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "Model Context Protocol tools for Vendr software pricing insights",
   "author": "Vendr Inc",
-  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "tsx src/index.ts",
-    "package:mcpb": "mcpb pack"
+    "package:mcpb": "npm run build && mcpb pack"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.11.0",
