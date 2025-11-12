@@ -24,8 +24,7 @@ npm install
 ### Basic Setup
 
 ```typescript
-import { makeServer } from "./src/server";
-import { Context } from "./src/context";
+import { makeServer, type Context } from "./src/index";
 
 // Create a context with your API configuration
 const context: Context = {
@@ -43,19 +42,11 @@ const server = makeServer(context);
 ### Available Tools
 
 #### Catalog Tools
-- **listCategories**: Browse software categories
-- **listCompanies**: List companies in the catalog
-- **getCompany**: Get detailed company information
-- **listProductFamilies**: List product families for a company
-- **getProductFamily**: Get detailed product family information
-- **listProducts**: List products for a company
-- **getProduct**: Get detailed product information
+- **searchCompaniesAndProducts**: Search for companies and products in the catalog
 
 #### Pricing Tools
-- **createScope**: Create a pricing scope with dimension values
-- **getScope**: Retrieve an existing scope
-- **getBasicPriceEstimate**: Get a basic price estimate for a scope
-- **getAdvancedPriceEstimate**: Get an advanced price estimate for a scope
+- **getCustomPriceEstimate**: Get a custom price estimate for a scope with pricing benchmarks
+- **getNegotiationInsights**: Get negotiation insights and recommendations
 
 ## API Requirements
 

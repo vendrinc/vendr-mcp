@@ -6,7 +6,7 @@ This guide walks you through installing the Vendr MCP Tools as a Desktop Extensi
 
 - [Claude Desktop](https://claude.ai/download) installed on your computer
 - A Vendr API key (contact your Vendr administrator)
-- Your Vendr user identifier
+- Your email
 
 ## Installation Steps
 
@@ -27,7 +27,6 @@ After installation, you'll need to configure the extension with your Vendr crede
 
 #### Required Configuration:
 - **Vendr API Key**: Your API key for accessing Vendr's pricing data
-- **User Identifier**: A unique identifier for the end user
 - **Vendr API Base URL**: Defaults to `https://api.vendr.com`
 - **User IP Address**: IP address of the end user
 - **User Email**: Email address of the end user
@@ -79,11 +78,11 @@ Once installed, you can ask Claude questions like:
 ### Extension Appears Installed but Tools Aren't Available
 - Restart Claude Desktop to refresh the extension registry
 - Check the extension's configuration settings for missing required fields
-- Verify your API key and user identifier are entered correctly
+- Verify your API key and email are entered correctly
 
 ### Configuration Issues
 - Navigate to Settings > Extensions and click on the Vendr extension to review settings
-- Ensure all required configuration fields (API Key, User Identifier) are completed
+- Ensure all required configuration fields (API Key, Email) are completed
 - Contact your Vendr administrator if you need help obtaining API credentials
 
 ### Permission or Security Errors
@@ -104,7 +103,7 @@ For technical issues with the extension:
 
 ## Version Information
 
-- **Extension Version**: 1.0.0
+- **Extension Version**: 1.1.0
 - **Package Size**: 18.4MB
 - **Total Files**: 3,622
 - **Node.js Runtime**: Included (no separate installation required)
