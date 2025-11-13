@@ -86,6 +86,9 @@ npm run start
 
 MIT
 
+## Privacy Policy
+https://www.vendr.com/legal/privacy-policy
+
 ## Support
 
 For questions about Vendr's software pricing tools or to connect with pricing experts, visit [Vendr](https://vendr.com).
