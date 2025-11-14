@@ -1,4 +1,4 @@
-name: Create DXT Release
+name: Create MCPB Release
 
 on:
   release:
@@ -38,11 +38,11 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Install DXT CLI
-      run: npm install -g @anthropic-ai/dxt
+    - name: Install MCPB CLI
+      run: npm install -g @anthropic-ai/mcpb
 
-    - name: Create DXT package
-      run: npm run package:dxt
+    - name: Create MCPB package
+      run: npm run package:mcpb
 
     - name: Get package info
       id: package-info
@@ -53,11 +53,11 @@ jobs:
         echo "version=${PACKAGE_VERSION}" >> $GITHUB_OUTPUT
         echo "filename=vendr-mcp.dxt" >> $GITHUB_OUTPUT
 
-    - name: Upload DXT artifact
+    - name: Upload DXMCPBT artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dxt-package
-        path: "*.dxt"
+        name: mcp-package
+        path: "*.mcpb"
         retention-days: 90
 
     - name: Create release (if triggered by push to main)
