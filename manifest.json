@@ -18,6 +18,7 @@
     "saas",
     "procurement"
   ],
+  "privacy_policies": ["https://www.vendr.com/legal/privacy-policy"],
   "user_config": {
     "VENDR_API_KEY": {
       "type": "string",
