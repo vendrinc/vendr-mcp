@@ -14,11 +14,48 @@ export const outputSchema = V1NegotiationFaqsCompanyidGetSchema.outputSchema;
 export const description = Shared.description;
 
 export function register(server: McpServer, context: Context) {
+  type Args = Common.SchemaType<typeof inputSchema>;
+
+  const handler: Common.ToolHandler<Args> = async (args) => {
+    try {
+      const result = await PublicApi.getFaqs({
+        baseUrl: context.baseUrl,
+        headers: {
+          Authorization: `Bearer ${context.apiKey}`,
+          ...context.userIdentifyingHeaders,
+        },
+        path: args,
+      });
+
+      if (result.data) {
+        const output: Common.OutputSchema<typeof outputSchema>["data"] = {
+          ...result.data,
+          faqs: result.data.faqs.map((faq) => ({
+            ...faq,
+            answer: faq.answer.replace(/<[^>]*>?/g, ""),
+          })),
+        };
+
+        return Common.structureContent(Result.success(output));
+      } else {
+        return Common.structureContent(Result.failure(result.error.detail));
+      }
+    } catch (e) {
+      Common.captureException(e, {
+        tags: { tool: name },
+        extra: { args: JSON.stringify(args) },
+      });
+      return Common.structureContent(
+        Result.failure(e instanceof Error ? e.message : String(e)),
+      );
+    }
+  };
+
   return server.registerTool(
     name,
     {
       description,
-      inputSchema,
+      inputSchema: inputSchema as Record<string, unknown>,
       outputSchema: Common.structuredSchema(outputSchema),
       annotations: {
         title: "Get Negotiation Insights",
@@ -27,47 +64,7 @@ export function register(server: McpServer, context: Context) {
         idempotentHint: true,
         openWorldHint: true,
       },
-    },
-    Common.withInstrumentation(
-      name,
-      async (args) => {
-        try {
-          const result = await PublicApi.getFaqs({
-            baseUrl: context.baseUrl,
-            headers: {
-              Authorization: `Bearer ${context.apiKey}`,
-              ...context.userIdentifyingHeaders,
-            },
-            path: args,
-          });
-
-          if (result.data) {
-            const output: Common.OutputSchema<typeof outputSchema>["data"] = {
-              ...result.data,
-              faqs: result.data.faqs.map((faq) => ({
-                ...faq,
-                answer: faq.answer.replace(/<[^>]*>?/g, ""),
-              })),
-            };
-
-            return Common.structureContent(Result.success(output));
-          } else {
-            return Common.structureContent(Result.failure(result.error.detail));
-          }
-        } catch (e) {
-          Common.captureException(e, {
-            tags: { tool: name },
-            extra: { args: JSON.stringify(args) },
-          });
-          return Common.structureContent(
-            Result.failure(e instanceof Error ? e.message : String(e)),
-          );
-        }
-      },
-      // Custom attributes for this tool
-      (args) => ({
-        "mcp.tool.company_id": args.companyId,
-      }),
-    ),
+    } as Parameters<typeof server.registerTool>[1],
+    handler as Parameters<typeof server.registerTool>[2],
   );
 }
