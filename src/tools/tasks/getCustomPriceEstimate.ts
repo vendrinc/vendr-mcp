@@ -89,11 +89,97 @@ export const outputSchema = {
 };
 
 export function register(server: McpServer, context: Context) {
+  type Args = Common.SchemaType<typeof inputSchema>;
+
+  const handler: Common.ToolHandler<Args> = async (args) => {
+    try {
+      const headers = {
+        Authorization: `Bearer ${context.apiKey}`,
+        ...context.userIdentifyingHeaders,
+      };
+
+      const scopeResult = await PublicApi.createScope({
+        baseUrl: context.baseUrl,
+        headers,
+        body: {
+          ...args,
+          previousScopeId: args.previousScopeId ?? undefined,
+          productTerms: args.productTerms.map((pt) => ({
+            ...pt,
+            startDate: pt?.startDate?.toJSON() ?? undefined,
+            endDate: pt?.endDate?.toJSON() ?? undefined,
+            discount: pt.discount ? Math.round(pt.discount) : undefined,
+            finalPrice: pt.finalPrice ? Math.round(pt.finalPrice) : undefined,
+            listPrice: pt.listPrice ? Math.round(pt.listPrice) : undefined,
+          })),
+          scopeTerms: args.scopeTerms.map((st) => ({
+            ...st,
+            autoRenew: st.autoRenew ?? undefined,
+            startDate: st?.startDate?.toJSON() ?? undefined,
+            endDate: st?.endDate?.toJSON() ?? undefined,
+            discount: st.discount ? Math.round(st.discount) : undefined,
+            finalPrice: st.finalPrice ? Math.round(st.finalPrice) : undefined,
+            listPrice: st.listPrice ? Math.round(st.listPrice) : undefined,
+          })),
+        },
+      });
+
+      if (scopeResult.data) {
+        const priceEstimateResult = await PublicApi.getAdvancedPriceEstimate({
+          baseUrl: context.baseUrl,
+          headers: {
+            Authorization: `Bearer ${context.apiKey}`,
+            ...context.userIdentifyingHeaders,
+          },
+          path: { scopeId: scopeResult.data.id },
+        });
+
+        if (priceEstimateResult.data) {
+          const output: Common.OutputSchema<typeof outputSchema>["data"] = {
+            ...priceEstimateResult.data,
+            estimate: priceEstimateResult.data.estimate
+              ? roundPercentiles(priceEstimateResult.data.estimate)
+              : null,
+            productEstimates: priceEstimateResult.data.productEstimates.map(
+              (pe) => ({
+                ...pe,
+                estimate:
+                  pe.status === "success" && pe.estimate
+                    ? roundPercentiles(pe.estimate)
+                    : undefined,
+              }),
+            ),
+            // Not provided by the API - added for schema extension
+            companyDefaultPriceRange: null,
+          };
+
+          return Common.structureContent(Result.success(output));
+        } else {
+          return Common.structureContent(
+            Result.failure(priceEstimateResult.error.detail),
+          );
+        }
+      } else {
+        return Common.structureContent(
+          Result.failure(scopeResult.error.detail),
+        );
+      }
+    } catch (e) {
+      Common.captureException(e, {
+        tags: { tool: name },
+        extra: { args: JSON.stringify(args) },
+      });
+      return Common.structureContent(
+        Result.failure(e instanceof Error ? e.message : String(e)),
+      );
+    }
+  };
+
   return server.registerTool(
     name,
     {
       description,
-      inputSchema,
+      inputSchema: inputSchema as Record<string, unknown>,
       outputSchema: Common.structuredSchema(outputSchema),
       annotations: {
         title: "Get Custom Price Estimate",
@@ -102,87 +188,7 @@ export function register(server: McpServer, context: Context) {
         idempotentHint: false,
         openWorldHint: true,
       },
-    },
-    Common.withInstrumentation(name, async (args) => {
-      try {
-        const headers = {
-          Authorization: `Bearer ${context.apiKey}`,
-          ...context.userIdentifyingHeaders,
-        };
-
-        const scopeResult = await PublicApi.createScope({
-          baseUrl: context.baseUrl,
-          headers,
-          body: {
-            ...args,
-            previousScopeId: args.previousScopeId ?? undefined,
-            productTerms: args.productTerms.map((pt) => ({
-              ...pt,
-              startDate: pt?.startDate?.toJSON() ?? undefined,
-              endDate: pt?.endDate?.toJSON() ?? undefined,
-              discount: pt.discount ? Math.round(pt.discount) : undefined,
-              finalPrice: pt.finalPrice ? Math.round(pt.finalPrice) : undefined,
-              listPrice: pt.listPrice ? Math.round(pt.listPrice) : undefined,
-            })),
-            scopeTerms: args.scopeTerms.map((st) => ({
-              ...st,
-              autoRenew: st.autoRenew ?? undefined,
-              startDate: st?.startDate?.toJSON() ?? undefined,
-              endDate: st?.endDate?.toJSON() ?? undefined,
-              discount: st.discount ? Math.round(st.discount) : undefined,
-              finalPrice: st.finalPrice ? Math.round(st.finalPrice) : undefined,
-              listPrice: st.listPrice ? Math.round(st.listPrice) : undefined,
-            })),
-          },
-        });
-
-        if (scopeResult.data) {
-          const priceEstimateResult = await PublicApi.getAdvancedPriceEstimate({
-            baseUrl: context.baseUrl,
-            headers: {
-              Authorization: `Bearer ${context.apiKey}`,
-              ...context.userIdentifyingHeaders,
-            },
-            path: { scopeId: scopeResult.data.id },
-          });
-
-          if (priceEstimateResult.data) {
-            const output: Common.OutputSchema<typeof outputSchema>["data"] = {
-              ...priceEstimateResult.data,
-              estimate: priceEstimateResult.data.estimate
-                ? roundPercentiles(priceEstimateResult.data.estimate)
-                : null,
-              productEstimates: priceEstimateResult.data.productEstimates.map(
-                (pe) => ({
-                  ...pe,
-                  estimate:
-                    pe.status === "success" && pe.estimate
-                      ? roundPercentiles(pe.estimate)
-                      : undefined,
-                }),
-              ),
-            };
-
-            return Common.structureContent(Result.success(output));
-          } else {
-            return Common.structureContent(
-              Result.failure(priceEstimateResult.error.detail),
-            );
-          }
-        } else {
-          return Common.structureContent(
-            Result.failure(scopeResult.error.detail),
-          );
-        }
-      } catch (e) {
-        Common.captureException(e, {
-          tags: { tool: name },
-          extra: { args: JSON.stringify(args) },
-        });
-        return Common.structureContent(
-          Result.failure(e instanceof Error ? e.message : String(e)),
-        );
-      }
-    }),
+    } as Parameters<typeof server.registerTool>[1],
+    handler as Parameters<typeof server.registerTool>[2],
   );
 }

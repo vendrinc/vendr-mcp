@@ -4,19 +4,22 @@ import * as Zod from "zod";
 import { serializers } from "../utils/json";
 
 export const description = `
-Vendr MCP Tools provide software pricing insights by adding Vendr’s proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr’s hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. 
+Vendr MCP Tools provide software pricing insights by adding Vendr's proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr's hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. 
 `;
 
 export type SchemaType<S extends Zod.ZodRawShape> = {
   [Property in keyof S]: Zod.infer<S[Property]>;
 };
 
+/**
+ * Wraps an output schema shape with standard error/success structure.
+ */
 export function structuredSchema<S extends Zod.ZodRawShape>(success: S) {
-  return {
+  return Zod.object({
     isError: Zod.boolean(),
     errorMessage: Zod.string().nullish(),
     data: Zod.object(success).nullish(),
-  } satisfies Zod.ZodRawShape;
+  });
 }
 
 const userIdentifyingHeadersSchema = Zod.object({
@@ -36,9 +39,19 @@ export function getUserIdentifyingHeaders(
   return userIdentifyingHeadersSchema.parse(headers);
 }
 
-export type OutputSchema<S extends Zod.ZodRawShape> = SchemaType<
+/**
+ * Type helper to get the inferred output type for a structured schema.
+ */
+export type OutputSchema<S extends Zod.ZodRawShape> = Zod.infer<
   ReturnType<typeof structuredSchema<S>>
 >;
+
+/**
+ * Type for tool callback - uses any to prevent deep type inference
+ * on complex nested schemas which can cause TypeScript memory issues.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolHandler<Args = any> = (args: Args, extra: any) => any;
 
 export function structureContent<S>(result: Result<S, string>) {
   const isError = result.isFailure;

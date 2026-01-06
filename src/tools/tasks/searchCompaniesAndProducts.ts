@@ -34,11 +34,102 @@ export const outputSchema = {
 };
 
 export function register(server: McpServer, context: Context) {
+  type Args = Common.SchemaType<typeof inputSchema>;
+
+  const handler: Common.ToolHandler<Args> = async (args) => {
+    try {
+      const headers = {
+        Authorization: `Bearer ${context.apiKey}`,
+        ...context.userIdentifyingHeaders,
+      };
+
+      const companiesResult = await PublicApi.listCompanies({
+        baseUrl: context.baseUrl,
+        headers,
+        query: {
+          name: args.companyName,
+          limit: 1,
+          offset: 0,
+          sortBy: "name",
+          sortOrder: "asc",
+        },
+      });
+
+      if (companiesResult.data) {
+        // Check if we found any companies
+        if (companiesResult.data.pagination.total === 0) {
+          return Common.structureContent(
+            Result.failure(
+              `No companies found matching the name "${args.companyName}".`,
+            ),
+          );
+        }
+
+        // Find the best match (first result should be most relevant due to sorting)
+        const matchedCompany = companiesResult.data.data[0];
+
+        // Step 2: Get detailed company information
+        const companyDetailsResult = await PublicApi.getCompany({
+          baseUrl: context.baseUrl,
+          headers,
+          path: { companyId: matchedCompany.id },
+        });
+
+        // Handle company details errors
+        if (!companyDetailsResult.data) {
+          return Common.structureContent(
+            Result.failure(companyDetailsResult.error.detail),
+          );
+        }
+
+        // Step 3: Get company products
+        const productsResult = await PublicApi.getCompanyProducts({
+          baseUrl: context.baseUrl,
+          headers,
+          path: { companyId: matchedCompany.id },
+          query: {
+            limit: args.productLimit,
+            offset: 0,
+            sortBy: "sortOrder",
+            sortOrder: "asc",
+          },
+        });
+
+        // Handle products errors
+        if (!productsResult.data) {
+          return Common.structureContent(
+            Result.failure(productsResult.error.detail),
+          );
+        }
+
+        // Return combined results
+        return Common.structureContent(
+          Result.success({
+            matchedCompany: companyDetailsResult.data,
+            products: productsResult.data,
+          }),
+        );
+      } else {
+        return Common.structureContent(
+          Result.failure(companiesResult.error.detail),
+        );
+      }
+    } catch (e) {
+      Common.captureException(e, {
+        tags: { tool: name },
+        extra: { args: JSON.stringify(args) },
+      });
+      return Common.structureContent(
+        Result.failure(e instanceof Error ? e.message : String(e)),
+      );
+    }
+  };
+
   return server.registerTool(
     name,
     {
       description,
-      inputSchema,
+      inputSchema: inputSchema as Record<string, unknown>,
       outputSchema: Common.structuredSchema(outputSchema),
       annotations: {
         title: "Get Companies and Products",
@@ -47,97 +138,7 @@ export function register(server: McpServer, context: Context) {
         idempotentHint: true,
         openWorldHint: true,
       },
-    },
-    Common.withInstrumentation(
-      name,
-      async (args: Common.SchemaType<typeof inputSchema>) => {
-        try {
-          const headers = {
-            Authorization: `Bearer ${context.apiKey}`,
-            ...context.userIdentifyingHeaders,
-          };
-
-          const companiesResult = await PublicApi.listCompanies({
-            baseUrl: context.baseUrl,
-            headers,
-            query: {
-              name: args.companyName,
-              limit: 1,
-              offset: 0,
-              sortBy: "name",
-              sortOrder: "asc",
-            },
-          });
-
-          if (companiesResult.data) {
-            // Check if we found any companies
-            if (companiesResult.data.pagination.total === 0) {
-              return Common.structureContent(
-                Result.failure(
-                  `No companies found matching the name "${args.companyName}".`,
-                ),
-              );
-            }
-
-            // Find the best match (first result should be most relevant due to sorting)
-            const matchedCompany = companiesResult.data.data[0];
-
-            // Step 2: Get detailed company information
-            const companyDetailsResult = await PublicApi.getCompany({
-              baseUrl: context.baseUrl,
-              headers,
-              path: { companyId: matchedCompany.id },
-            });
-
-            // Handle company details errors
-            if (!companyDetailsResult.data) {
-              return Common.structureContent(
-                Result.failure(companyDetailsResult.error.detail),
-              );
-            }
-
-            // Step 3: Get company products
-            const productsResult = await PublicApi.getCompanyProducts({
-              baseUrl: context.baseUrl,
-              headers,
-              path: { companyId: matchedCompany.id },
-              query: {
-                limit: args.productLimit,
-                offset: 0,
-                sortBy: "sortOrder",
-                sortOrder: "asc",
-              },
-            });
-
-            // Handle products errors
-            if (!productsResult.data) {
-              return Common.structureContent(
-                Result.failure(productsResult.error.detail),
-              );
-            }
-
-            // Return combined results
-            return Common.structureContent(
-              Result.success({
-                matchedCompany: companyDetailsResult.data,
-                products: productsResult.data,
-              }),
-            );
-          } else {
-            return Common.structureContent(
-              Result.failure(companiesResult.error.detail),
-            );
-          }
-        } catch (e) {
-          Common.captureException(e, {
-            tags: { tool: name },
-            extra: { args: JSON.stringify(args) },
-          });
-          return Common.structureContent(
-            Result.failure(e instanceof Error ? e.message : String(e)),
-          );
-        }
-      },
-    ),
+    } as Parameters<typeof server.registerTool>[1],
+    handler as Parameters<typeof server.registerTool>[2],
   );
 }
