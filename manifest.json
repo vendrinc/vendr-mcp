@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "vendr-mcp-tools",
   "display_name": "Vendr Software Pricing Tools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Model Context Protocol tools for Vendr software pricing insights. Get price estimates, company information, and product catalog data.",
   "author": {
     "name": "Vendr Inc",

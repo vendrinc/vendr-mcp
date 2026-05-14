@@ -38,7 +38,11 @@ export function register(server: McpServer, context: Context) {
 
         return Common.structureContent(Result.success(output));
       } else {
-        return Common.structureContent(Result.failure(result.error.detail));
+        return Common.structureContent(
+          Result.failure(
+            Common.describePublicApiFailure(result.error, result.response),
+          ),
+        );
       }
     } catch (e) {
       Common.captureException(e, {
@@ -46,7 +50,7 @@ export function register(server: McpServer, context: Context) {
         extra: { args: JSON.stringify(args) },
       });
       return Common.structureContent(
-        Result.failure(e instanceof Error ? e.message : String(e)),
+        Result.failure(Common.describeClientError(e)),
       );
     }
   };

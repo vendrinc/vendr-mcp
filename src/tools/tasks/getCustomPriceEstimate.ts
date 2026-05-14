@@ -156,12 +156,22 @@ export function register(server: McpServer, context: Context) {
           return Common.structureContent(Result.success(output));
         } else {
           return Common.structureContent(
-            Result.failure(priceEstimateResult.error.detail),
+            Result.failure(
+              Common.describePublicApiFailure(
+                priceEstimateResult.error,
+                priceEstimateResult.response,
+              ),
+            ),
           );
         }
       } else {
         return Common.structureContent(
-          Result.failure(scopeResult.error.detail),
+          Result.failure(
+            Common.describePublicApiFailure(
+              scopeResult.error,
+              scopeResult.response,
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -170,7 +180,7 @@ export function register(server: McpServer, context: Context) {
         extra: { args: JSON.stringify(args) },
       });
       return Common.structureContent(
-        Result.failure(e instanceof Error ? e.message : String(e)),
+        Result.failure(Common.describeClientError(e)),
       );
     }
   };
