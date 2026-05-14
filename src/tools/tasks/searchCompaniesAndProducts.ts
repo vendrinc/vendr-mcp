@@ -78,7 +78,12 @@ export function register(server: McpServer, context: Context) {
         // Handle company details errors
         if (!companyDetailsResult.data) {
           return Common.structureContent(
-            Result.failure(companyDetailsResult.error.detail),
+            Result.failure(
+              Common.describePublicApiFailure(
+                companyDetailsResult.error,
+                companyDetailsResult.response,
+              ),
+            ),
           );
         }
 
@@ -98,7 +103,12 @@ export function register(server: McpServer, context: Context) {
         // Handle products errors
         if (!productsResult.data) {
           return Common.structureContent(
-            Result.failure(productsResult.error.detail),
+            Result.failure(
+              Common.describePublicApiFailure(
+                productsResult.error,
+                productsResult.response,
+              ),
+            ),
           );
         }
 
@@ -111,7 +121,12 @@ export function register(server: McpServer, context: Context) {
         );
       } else {
         return Common.structureContent(
-          Result.failure(companiesResult.error.detail),
+          Result.failure(
+            Common.describePublicApiFailure(
+              companiesResult.error,
+              companiesResult.response,
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -120,7 +135,7 @@ export function register(server: McpServer, context: Context) {
         extra: { args: JSON.stringify(args) },
       });
       return Common.structureContent(
-        Result.failure(e instanceof Error ? e.message : String(e)),
+        Result.failure(Common.describeClientError(e)),
       );
     }
   };
