@@ -5,6 +5,7 @@
   "author": "Vendr Inc",
   "main": "src/index.ts",
   "scripts": {
+    "prebuild": "npm test",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",

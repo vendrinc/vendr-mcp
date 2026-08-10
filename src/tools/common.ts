@@ -53,10 +53,13 @@ export type ToolHandler<Args = any> = (args: Args, extra: any) => any;
 
 export function structureContent<S>(result: Result<S, string>) {
   const isError = result.isFailure;
+  const errorMessage = isError
+    ? result.error?.trim() || "Vendr tool execution failed."
+    : result.error;
 
   const structuredContent = {
     isError,
-    errorMessage: result.error,
+    errorMessage,
     data: result.value,
   };
 
