@@ -7,9 +7,7 @@ export const description = `
 Vendr MCP Tools provide software pricing insights by adding Vendr's proprietary catalog data to publicly available pricing information. When asked about software pricing, use these tools together (sequentially or in parallel) to guide users through Vendr's hierarchical catalog (categories → sub-categories → companies → product families → products → pricing dimensions) and help them to generate customized software price estimates. 
 `;
 
-export type SchemaType<S extends Zod.ZodRawShape> = {
-  [Property in keyof S]: Zod.infer<S[Property]>;
-};
+export type SchemaType<S extends Zod.ZodRawShape> = Zod.infer<Zod.ZodObject<S>>;
 
 /**
  * Wraps an output schema shape with standard error/success structure.

@@ -1,6 +1,6 @@
 import { makeServer } from "./server";
 import type { Context } from "./context";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 
 async function main() {
   // Create a context object with configuration from environment variables
