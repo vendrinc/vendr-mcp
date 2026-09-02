@@ -1,5 +1,6 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { Result } from "result-type-ts";
+import { z } from "zod";
 import type { Context } from "../../context";
 import * as PublicApi from "../../public-api";
 import { V1NegotiationFaqsCompanyidGetSchema } from "../../public-api/schemas.gen";
@@ -59,7 +60,7 @@ export function register(server: McpServer, context: Context) {
     name,
     {
       description,
-      inputSchema: inputSchema as Record<string, unknown>,
+      inputSchema: z.object(inputSchema),
       outputSchema: Common.structuredSchema(outputSchema),
       annotations: {
         title: "Get Negotiation Insights",
@@ -68,7 +69,7 @@ export function register(server: McpServer, context: Context) {
         idempotentHint: true,
         openWorldHint: true,
       },
-    } as Parameters<typeof server.registerTool>[1],
-    handler as Parameters<typeof server.registerTool>[2],
+    },
+    handler,
   );
 }

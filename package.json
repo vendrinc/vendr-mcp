@@ -7,18 +7,22 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/**/*.test.ts",
     "start": "tsx src/index.ts",
     "package:mcpb": "npm run build && mcpb pack"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.11.0",
-    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@modelcontextprotocol/server": "^2.0.0",
     "result-type-ts": "^2.2.0",
-    "zod": "^3.25.48"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@anthropic-ai/mcpb": "^2.0.1",
+    "@modelcontextprotocol/client": "^2.0.0",
     "@types/node": "^22.15.29",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   },

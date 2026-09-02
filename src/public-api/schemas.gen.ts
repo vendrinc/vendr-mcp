@@ -2,6 +2,11 @@
 
 import z from "zod";
 
+const isoDateSchema = z.codec(z.iso.datetime({ offset: true }), z.date(), {
+  decode: (value) => new Date(value),
+  encode: (value) => value.toISOString(),
+});
+
 // v1.catalog.companies.{companyId}.get.ts
 export const V1CatalogCompaniesCompanyidGetSchema = {
   inputSchema: {
@@ -187,13 +192,11 @@ export const V1ScopePostSchema = {
             .nullable()
             .describe("Whether the scope has a auto-renewal clause or not")
             .optional(),
-          startDate: z.coerce
-            .date()
+          startDate: isoDateSchema
             .nullable()
             .describe("Start date of the scope")
             .optional(),
-          endDate: z.coerce
-            .date()
+          endDate: isoDateSchema
             .nullable()
             .describe("End date of the scope")
             .optional(),
@@ -232,13 +235,11 @@ export const V1ScopePostSchema = {
             )
             .min(1)
             .describe("Dimensions that impact the price of the product"),
-          startDate: z.coerce
-            .date()
+          startDate: isoDateSchema
             .nullable()
             .describe("Product specific start date")
             .optional(),
-          endDate: z.coerce
-            .date()
+          endDate: isoDateSchema
             .nullable()
             .describe("Product specific end date ")
             .optional(),
@@ -450,7 +451,7 @@ export const V1PricingAdvancedScopeidGetSchema = {
       .describe("Price estimate distribution at 5 percentile increments"),
     productEstimates: z
       .array(
-        z.record(z.any()).and(
+        z.record(z.string(), z.any()).and(
           z.any().superRefine((x, ctx) => {
             const schemas = [
               z
@@ -547,9 +548,7 @@ export const V1PricingAdvancedScopeidGetSchema = {
             );
             if (schemas.length - errors.length !== 1) {
               ctx.addIssue({
-                path: ctx.path,
-                code: "invalid_union",
-                unionErrors: errors,
+                code: "custom",
                 message: "Invalid input: Should pass single schema",
               });
             }
@@ -662,7 +661,7 @@ export const V1CatalogProductsProductidGetSchema = {
           .describe(
             "whether the impact of this dimension on price is clearly known or not",
           ),
-        formField: z.record(z.any()).and(
+        formField: z.record(z.string(), z.any()).and(
           z.any().superRefine((x, ctx) => {
             const schemas = [
               z
@@ -726,9 +725,7 @@ export const V1CatalogProductsProductidGetSchema = {
             );
             if (schemas.length - errors.length !== 1) {
               ctx.addIssue({
-                path: ctx.path,
-                code: "invalid_union",
-                unionErrors: errors,
+                code: "custom",
                 message: "Invalid input: Should pass single schema",
               });
             }
@@ -795,7 +792,7 @@ export const V1CatalogProductsProductidGetSchema = {
               .describe(
                 "whether the impact of this dimension on price is clearly known or not",
               ),
-            formField: z.record(z.any()).and(
+            formField: z.record(z.string(), z.any()).and(
               z.any().superRefine((x, ctx) => {
                 const schemas = [
                   z
@@ -859,9 +856,7 @@ export const V1CatalogProductsProductidGetSchema = {
                 );
                 if (schemas.length - errors.length !== 1) {
                   ctx.addIssue({
-                    path: ctx.path,
-                    code: "invalid_union",
-                    unionErrors: errors,
+                    code: "custom",
                     message: "Invalid input: Should pass single schema",
                   });
                 }
@@ -1402,7 +1397,7 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
               .describe(
                 "whether the impact of this dimension on price is clearly known or not",
               ),
-            formField: z.record(z.any()).and(
+            formField: z.record(z.string(), z.any()).and(
               z.any().superRefine((x, ctx) => {
                 const schemas = [
                   z
@@ -1466,9 +1461,7 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
                 );
                 if (schemas.length - errors.length !== 1) {
                   ctx.addIssue({
-                    path: ctx.path,
-                    code: "invalid_union",
-                    unionErrors: errors,
+                    code: "custom",
                     message: "Invalid input: Should pass single schema",
                   });
                 }
@@ -1540,7 +1533,7 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
                   .describe(
                     "whether the impact of this dimension on price is clearly known or not",
                   ),
-                formField: z.record(z.any()).and(
+                formField: z.record(z.string(), z.any()).and(
                   z.any().superRefine((x, ctx) => {
                     const schemas = [
                       z
@@ -1607,9 +1600,7 @@ export const V1CatalogCompaniesCompanyidProductsGetSchema = {
                     );
                     if (schemas.length - errors.length !== 1) {
                       ctx.addIssue({
-                        path: ctx.path,
-                        code: "invalid_union",
-                        unionErrors: errors,
+                        code: "custom",
                         message: "Invalid input: Should pass single schema",
                       });
                     }
